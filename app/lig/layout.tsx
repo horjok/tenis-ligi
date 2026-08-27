@@ -43,6 +43,15 @@ export default async function LigLayout({ children }: LayoutProps<"/lig">) {
           <Link href="/lig" className={bagSinifi}>
             Puan tablosu
           </Link>
+          <Link href="/lig/takvim" className={bagSinifi}>
+            Takvim
+          </Link>
+          <Link href="/lig/onerilerim" className={bagSinifi}>
+            Önerilerim
+          </Link>
+          <Link href="/lig/yaklasan" className={bagSinifi}>
+            Yaklaşan
+          </Link>
           <Link href="/lig/mac-ekle" className={bagSinifi}>
             Maç ekle
           </Link>

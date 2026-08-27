@@ -39,6 +39,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      availability_slots: {
+        Row: {
+          created_at: string
+          id: string
+          league_id: string
+          slot_start: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          league_id: string
+          slot_start: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          league_id?: string
+          slot_start?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "availability_slots_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_codes: {
         Row: {
           code: string
@@ -167,6 +199,13 @@ export type Database = {
             referencedRelation: "matches"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "match_participants_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "oneri_listesi"
+            referencedColumns: ["match_id"]
+          },
         ]
       }
       match_sets: {
@@ -206,12 +245,19 @@ export type Database = {
             referencedRelation: "matches"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "match_sets_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "oneri_listesi"
+            referencedColumns: ["match_id"]
+          },
         ]
       }
       matches: {
         Row: {
           created_at: string
-          created_by: string
+          created_by: string | null
           id: string
           league_id: string
           location: string | null
@@ -222,7 +268,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          created_by: string
+          created_by?: string | null
           id?: string
           league_id: string
           location?: string | null
@@ -233,7 +279,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           id?: string
           league_id?: string
           location?: string | null
@@ -312,6 +358,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matches"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rating_history_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "oneri_listesi"
+            referencedColumns: ["match_id"]
           },
         ]
       }
@@ -395,6 +448,29 @@ export type Database = {
           },
         ]
       }
+      oneri_listesi: {
+        Row: {
+          league_id: string | null
+          match_id: string | null
+          oyuncu1_ad: string | null
+          oyuncu1_id: string | null
+          oyuncu1_kabul: string | null
+          oyuncu2_ad: string | null
+          oyuncu2_id: string | null
+          oyuncu2_kabul: string | null
+          played_at: string | null
+          status: Database["public"]["Enums"]["match_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       puan_tablosu: {
         Row: {
           display_name: string | null
@@ -423,6 +499,8 @@ export type Database = {
         Args: { p_username: string }
         Returns: boolean
       }
+      oneriyi_kabul_et: { Args: { p_match_id: string }; Returns: string }
+      oneriyi_reddet: { Args: { p_match_id: string }; Returns: undefined }
       recalculate_ratings: { Args: { p_league_id: string }; Returns: number }
       record_match: {
         Args: {
@@ -434,6 +512,15 @@ export type Database = {
           p_winner_id: string
         }
         Returns: string
+      }
+      sonuc_gir: {
+        Args: {
+          p_location?: string
+          p_match_id: string
+          p_sets?: Json
+          p_winner_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

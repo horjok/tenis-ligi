@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.17"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       availability_slots: {
@@ -70,6 +45,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      email_verifications: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          sent_at: string | null
+          token: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          sent_at?: string | null
+          token?: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          sent_at?: string | null
+          token?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       invite_codes: {
         Row: {
@@ -298,6 +303,60 @@ export type Database = {
           },
         ]
       }
+      notification_log: {
+        Row: {
+          dry_run: boolean
+          id: string
+          kind: string
+          match_count: number
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          dry_run?: boolean
+          id?: string
+          kind: string
+          match_count: number
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          dry_run?: boolean
+          id?: string
+          kind?: string
+          match_count?: number
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_settings: {
+        Row: {
+          created_at: string
+          email: string | null
+          email_verified_at: string | null
+          opt_in: boolean
+          unsubscribe_token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          email_verified_at?: string | null
+          opt_in?: boolean
+          unsubscribe_token?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          email_verified_at?: string | null
+          opt_in?: boolean
+          unsubscribe_token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -495,6 +554,39 @@ export type Database = {
       }
     }
     Functions: {
+      bildirim_durumum: {
+        Args: never
+        Returns: {
+          bekleyen_email: string
+          bekleyen_son_gecerlilik: string
+          email: string
+          email_verified_at: string
+          opt_in: boolean
+        }[]
+      }
+      bildirimden_cik: { Args: { p_token: string }; Returns: boolean }
+      dogrulama_maili_verisi: {
+        Args: { p_user_id: string }
+        Returns: {
+          display_name: string
+          email: string
+          token: string
+        }[]
+      }
+      eposta_dogrula: { Args: { p_token: string }; Returns: Json }
+      eposta_ekle: { Args: { p_email: string }; Returns: undefined }
+      epostami_sil: { Args: never; Returns: undefined }
+      gunluk_bildirim_listesi: {
+        Args: { p_dry?: boolean }
+        Returns: {
+          display_name: string
+          email: string
+          oneri_sayisi: number
+          oneriler: Json
+          unsubscribe_token: string
+          user_id: string
+        }[]
+      }
       kullanici_adi_musait_mi: {
         Args: { p_username: string }
         Returns: boolean
@@ -653,9 +745,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       league_member_status: ["pending", "active", "left"],

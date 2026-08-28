@@ -16,8 +16,21 @@ import {
  * yaşar.
  */
 
-/** Giriş yapmamış kullanıcının girebileceği yollar. */
-const HERKESE_ACIK = ["/giris", "/auth"];
+/**
+ * Giriş yapmamış kullanıcının girebileceği yollar.
+ *
+ * Son iki yol maildeki bağlantılar. Bunlar giriş istemek ZORUNDA DEĞİL:
+ * mail başka bir cihazda, oturum açılmamış bir tarayıcıda açılabilir.
+ * Bildirim kapatma özellikle önemli — kapatmak için giriş yapmak gerekirse
+ * insanlar maili spam'e işaretler, o da gönderen itibarımızı yakar.
+ * İkisinin de güvenliği yoldaki 122 bitlik rastgele token'a dayanıyor.
+ */
+const HERKESE_ACIK = [
+  "/giris",
+  "/auth",
+  "/eposta-dogrula",
+  "/bildirim-kapat",
+];
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });

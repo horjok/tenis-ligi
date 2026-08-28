@@ -55,6 +55,13 @@ function Ikon({ ad }: { ad: string }) {
           <path d="M5 5c4 4 4 10 0 14M19 5c-4 4-4 10 0 14" />
         </svg>
       );
+    case "profil":
+      return (
+        <svg {...ortak}>
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" />
+        </svg>
+      );
     case "yonetim":
       return (
         <svg {...ortak}>
@@ -75,6 +82,7 @@ const BAGLANTILAR: Bag[] = [
   { yol: "/lig/onerilerim", etiket: "Öneriler", ikon: "oneri", mobil: true },
   { yol: "/lig/yaklasan", etiket: "Yaklaşan", ikon: "yaklasan", mobil: true },
   { yol: "/lig/maclar", etiket: "Maçlar", ikon: "maclar", mobil: true },
+  { yol: "/lig/profil", etiket: "Profil", ikon: "profil", mobil: false },
   { yol: "/lig/yonetim", etiket: "Yönetim", ikon: "yonetim", mobil: false },
 ];
 
@@ -101,6 +109,13 @@ export function LigMenu({
         <h1 className="flex-1 font-baslik text-[24px] tracking-wide">
           Tenis Ligi
         </h1>
+        <Link
+          href="/lig/profil"
+          aria-label="Profil"
+          className="p-2 text-murekkep-sonuk"
+        >
+          <Ikon ad="profil" />
+        </Link>
         {admin && (
           <Link
             href="/lig/yonetim"

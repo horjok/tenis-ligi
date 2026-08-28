@@ -33,99 +33,120 @@ export default async function Yonetim() {
 
   return (
     <div className="flex flex-col gap-10">
-      <div>
-        <h1 className="text-xl font-semibold">Yönetim</h1>
-        <p className="mt-1 text-sm text-zinc-500">
-          Ligi sen yönetiyorsun. Kod üret, üyeleri gör, puanları yeniden
-          hesaplat.
+      <header className="border-b-4 border-kort pb-2">
+        <p className="font-veri text-[11px] uppercase tracking-wider text-murekkep-silik">
+          Yönetici paneli
         </p>
-      </div>
+        <h2 className="mt-1 text-[32px] md:text-[44px]">Yönetim</h2>
+      </header>
 
-      <section>
-        <h2 className="text-sm font-semibold">Davet kodları</h2>
-        <p className="mt-1 mb-4 text-sm text-zinc-500">
-          Yeni oyuncu ancak geçerli bir kodla kayıt olabilir. Kod girildiği anda
+      {/* ---------- Davet kodları ---------- */}
+      <section className="flex flex-col gap-4">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">
+          Davet Kodları
+        </h3>
+        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+          Yeni oyuncu ancak geçerli bir kodla kayıt olabilir. Kod girildiği an
           lige aktif üye olur, ayrıca onaylaman gerekmez.
         </p>
 
         <KodUretFormu />
 
         {kodlar && kodlar.length > 0 && (
-          <table className="mt-6 w-full text-sm">
-            <thead>
-              <tr className="border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800">
-                <th className="py-2 pr-3 font-medium">Kod</th>
-                <th className="py-2 pr-3 text-right font-medium">Kullanım</th>
-                <th className="py-2 pr-3 font-medium">Üretildi</th>
-                <th className="py-2 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {kodlar.map((k) => {
-                const dolu = k.used_count >= k.max_uses;
-                return (
-                  <tr
-                    key={k.id}
-                    className="border-b border-zinc-100 dark:border-zinc-900"
+          <div className="mt-2 border border-cizgi bg-yuzey-panel">
+            <div className="grid grid-cols-12 gap-2 border-b border-cizgi bg-yuzey-yukseltilmis px-3 py-2.5 font-baslik text-[14px] uppercase tracking-wider text-murekkep-silik">
+              <div className="col-span-5">Kod</div>
+              <div className="col-span-3 text-right">Kullanım</div>
+              <div className="col-span-2 hidden sm:block">Üretildi</div>
+              <div className="col-span-4 sm:col-span-2" />
+            </div>
+
+            {kodlar.map((k, i) => {
+              const dolu = k.used_count >= k.max_uses;
+              return (
+                <div
+                  key={k.id}
+                  className={[
+                    "grid grid-cols-12 items-center gap-2 px-3 py-2.5",
+                    i === kodlar.length - 1 ? "" : "border-b border-cizgi",
+                  ].join(" ")}
+                >
+                  <div
+                    className={`col-span-5 veri text-[15px] tracking-wider ${
+                      dolu ? "text-murekkep-silik line-through" : ""
+                    }`}
                   >
-                    <td
-                      className={`py-2.5 pr-3 font-mono ${dolu ? "text-zinc-400 line-through" : ""}`}
-                    >
-                      {k.code}
-                    </td>
-                    <td className="py-2.5 pr-3 text-right tabular-nums text-zinc-500">
-                      {k.used_count}/{k.max_uses}
-                    </td>
-                    <td className="py-2.5 pr-3 text-zinc-500">
-                      {tarihGoster(k.created_at)}
-                    </td>
-                    <td className="py-2.5">
-                      <KodIptalButonu kodId={k.id} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                    {k.code}
+                  </div>
+                  <div className="col-span-3 veri text-right text-[15px] text-murekkep-sonuk">
+                    {k.used_count}/{k.max_uses}
+                  </div>
+                  <div className="col-span-2 hidden font-veri text-[12px] text-murekkep-silik sm:block">
+                    {tarihGoster(k.created_at)}
+                  </div>
+                  <div className="col-span-4 text-right sm:col-span-2">
+                    <KodIptalButonu kodId={k.id} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </section>
 
-      <section>
-        <h2 className="text-sm font-semibold">Üyeler</h2>
-        <table className="mt-4 w-full text-sm">
-          <thead>
-            <tr className="border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800">
-              <th className="py-2 pr-3 font-medium">Oyuncu</th>
-              <th className="py-2 pr-3 font-medium">Kullanıcı adı</th>
-              <th className="py-2 pr-3 font-medium">Rol</th>
-              <th className="py-2 font-medium">Katıldı</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(uyeler ?? []).map((u) => (
-              <tr
-                key={u.user_id}
-                className="border-b border-zinc-100 dark:border-zinc-900"
-              >
-                <td className="py-2.5 pr-3">{u.display_name}</td>
-                <td className="py-2.5 pr-3 font-mono text-xs text-zinc-500">
-                  {u.username}
-                </td>
-                <td className="py-2.5 pr-3 text-zinc-500">
-                  {u.role === "admin" ? "yönetici" : "oyuncu"}
-                </td>
-                <td className="py-2.5 text-zinc-500">
-                  {u.joined_at ? tarihGoster(u.joined_at) : "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {/* ---------- Üyeler ---------- */}
+      <section className="flex flex-col gap-4">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Üyeler</h3>
+
+        <div className="border border-cizgi bg-yuzey-panel">
+          <div className="grid grid-cols-12 gap-2 border-b border-cizgi bg-yuzey-yukseltilmis px-3 py-2.5 font-baslik text-[14px] uppercase tracking-wider text-murekkep-silik">
+            <div className="col-span-5">Oyuncu</div>
+            <div className="col-span-4 hidden sm:block">Kullanıcı adı</div>
+            <div className="col-span-4 sm:col-span-2">Rol</div>
+            <div className="col-span-3 hidden text-right sm:col-span-1 sm:block">
+              Katıldı
+            </div>
+          </div>
+
+          {(uyeler ?? []).map((u, i) => (
+            <div
+              key={u.user_id}
+              className={[
+                "grid grid-cols-12 items-center gap-2 px-3 py-2.5",
+                i === (uyeler?.length ?? 0) - 1 ? "" : "border-b border-cizgi",
+              ].join(" ")}
+            >
+              <div className="col-span-5 truncate font-baslik text-[20px] uppercase">
+                {u.display_name}
+              </div>
+              <div className="col-span-4 hidden truncate font-veri text-[13px] text-murekkep-silik sm:block">
+                {u.username}
+              </div>
+              <div className="col-span-4 sm:col-span-2">
+                {u.role === "admin" ? (
+                  <span className="bg-kort px-2 py-0.5 font-veri text-[10px] uppercase tracking-wide text-tebesir">
+                    Yönetici
+                  </span>
+                ) : (
+                  <span className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                    Oyuncu
+                  </span>
+                )}
+              </div>
+              <div className="col-span-3 hidden text-right font-veri text-[12px] text-murekkep-silik sm:col-span-1 sm:block">
+                {u.joined_at ? tarihGoster(u.joined_at) : "—"}
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section>
-        <h2 className="text-sm font-semibold">Puanları yeniden hesapla</h2>
-        <p className="mt-1 mb-4 text-sm leading-6 text-zinc-500">
+      {/* ---------- Yeniden hesaplama ---------- */}
+      <section className="flex flex-col gap-4">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">
+          Puanları Yeniden Hesapla
+        </h3>
+        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
           Elo zincirleme çalışır: bir maçın sonucu, o ana kadarki puanlara
           bağlıdır. Hatalı bir maçı sildikten sonra bunu çalıştır — tüm puanlar
           1000&apos;e döner ve maçlar tarih sırasıyla baştan işlenir.
@@ -133,7 +154,7 @@ export default async function Yonetim() {
         <form action={puanlariYenidenHesapla}>
           <button
             type="submit"
-            className="rounded-md border border-zinc-300 px-4 py-2 text-sm dark:border-zinc-700"
+            className="border-2 border-kort px-6 py-3 font-govde text-[14px] font-bold uppercase tracking-wider transition-colors hover:bg-kort hover:text-tebesir"
           >
             Yeniden hesapla
           </button>

@@ -17,34 +17,36 @@ export function KodUretFormu() {
   );
 
   return (
-    <form action={gonder} className="flex flex-col gap-3">
-      <label className="flex items-center gap-2 text-sm">
-        Kaç kişi kullanabilsin?
+    <form action={gonder} className="flex flex-col gap-4">
+      <label className="flex flex-wrap items-center gap-3">
+        <span className="font-baslik text-[16px] uppercase tracking-wide text-murekkep-sonuk">
+          Kaç kişi kullanabilsin?
+        </span>
         <input
           type="number"
           name="maxUses"
           defaultValue={1}
           min={1}
           max={50}
-          className="w-20 rounded-md border border-zinc-300 px-2 py-1.5 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+          className="w-20 border border-cizgi bg-transparent px-2 py-2 text-center veri text-[16px] focus:border-kort focus:outline-none"
         />
       </label>
 
       <button
         type="submit"
         disabled={bekliyor}
-        className="self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        className="self-start border border-kort bg-kort px-6 py-3 font-govde text-[14px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort disabled:opacity-50"
       >
-        {bekliyor ? "..." : "Kod üret"}
+        {bekliyor ? "…" : "Kod üret"}
       </button>
 
       {durum.bilgi && (
-        <p className="rounded-md bg-emerald-50 px-3 py-2 font-mono text-sm text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+        <p className="border-l-4 border-kazanan bg-yuzey-yukseltilmis px-3 py-2.5 font-veri text-[16px] tracking-wider">
           {durum.bilgi}
         </p>
       )}
       {durum.hata && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+        <p className="border-l-4 border-toprak bg-yuzey-yukseltilmis px-3 py-2.5 text-sm">
           {durum.hata}
         </p>
       )}
@@ -64,12 +66,14 @@ export function KodIptalButonu({ kodId }: { kodId: string }) {
       <button
         type="submit"
         disabled={bekliyor}
-        className="text-xs text-red-600 underline underline-offset-2 disabled:opacity-50 dark:text-red-400"
+        className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik underline underline-offset-2 transition-colors hover:text-toprak disabled:opacity-50"
       >
-        {bekliyor ? "..." : "iptal et"}
+        {bekliyor ? "…" : "İptal et"}
       </button>
       {durum.hata && (
-        <span className="ml-2 text-xs text-red-600">{durum.hata}</span>
+        <span className="ml-2 font-veri text-[11px] text-toprak">
+          {durum.hata}
+        </span>
       )}
     </form>
   );

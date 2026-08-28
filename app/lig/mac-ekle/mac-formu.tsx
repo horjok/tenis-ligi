@@ -6,9 +6,16 @@ import { macKaydet, type MacFormDurumu } from "@/app/actions/mac";
 
 const BOS: MacFormDurumu = {};
 
+const etiketSinifi =
+  "font-baslik text-[16px] uppercase tracking-wide text-murekkep-sonuk";
+
 const girdiSinifi =
-  "rounded-md border border-zinc-300 px-3 py-2 text-sm outline-none " +
-  "focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-zinc-100";
+  "w-full border border-cizgi bg-transparent px-3 py-2.5 text-[15px] " +
+  "focus:border-kort focus:outline-none";
+
+const skorGirdisi =
+  "w-14 border border-cizgi bg-transparent px-1 py-2 text-center veri text-[16px] " +
+  "focus:border-kort focus:outline-none";
 
 export type Oyuncu = { user_id: string; display_name: string };
 
@@ -31,7 +38,7 @@ export function MacFormu({
 
   if (oyuncular.length === 0) {
     return (
-      <p className="text-sm text-zinc-500">
+      <p className="border border-dashed border-cizgi px-4 py-12 text-center text-sm text-murekkep-silik">
         Ligde başka oyuncu yok. Maç kaydedebilmek için en az bir kişinin daha
         katılması gerekiyor.
       </p>
@@ -39,9 +46,12 @@ export function MacFormu({
   }
 
   return (
-    <form action={gonder} className="flex max-w-md flex-col gap-4">
-      <label className="flex flex-col gap-1 text-sm">
-        Rakip
+    <form
+      action={gonder}
+      className="flex max-w-lg flex-col gap-5 border border-cizgi bg-yuzey-panel p-5"
+    >
+      <label className="flex flex-col gap-1.5">
+        <span className={etiketSinifi}>Rakip</span>
         <select
           name="rakip"
           required
@@ -49,7 +59,7 @@ export function MacFormu({
           onChange={(e) => setRakipId(e.target.value)}
           className={girdiSinifi}
         >
-          <option value="">Seç...</option>
+          <option value="">Seç…</option>
           {oyuncular.map((o) => (
             <option key={o.user_id} value={o.user_id}>
               {o.display_name}
@@ -58,49 +68,73 @@ export function MacFormu({
         </select>
       </label>
 
-      <fieldset className="flex flex-col gap-2 text-sm">
-        <legend className="mb-1">Kazanan</legend>
-        <label className="flex items-center gap-2">
-          <input type="radio" name="kazanan" value="ben" required />
-          Ben
-        </label>
-        <label className="flex items-center gap-2">
-          <input type="radio" name="kazanan" value="rakip" />
-          {rakipAdi}
-        </label>
+      <fieldset className="flex flex-col gap-2">
+        <legend className={`${etiketSinifi} mb-1`}>Kazanan</legend>
+        <div className="flex flex-wrap gap-5">
+          <label className="flex items-center gap-2 font-baslik text-[18px] uppercase">
+            <input type="radio" name="kazanan" value="ben" required />
+            Ben
+          </label>
+          <label className="flex items-center gap-2 font-baslik text-[18px] uppercase">
+            <input type="radio" name="kazanan" value="rakip" />
+            {rakipAdi}
+          </label>
+        </div>
       </fieldset>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Tarih
+      <label className="flex flex-col gap-1.5">
+        <span className={etiketSinifi}>Tarih</span>
         <input
           type="date"
           name="tarih"
           required
           defaultValue={bugun}
           max={bugun}
-          className={girdiSinifi}
+          className={`${girdiSinifi} veri`}
         />
       </label>
 
-      <div className="flex flex-col gap-2 text-sm">
-        <span>
+      <div className="flex flex-col gap-2">
+        <span className={etiketSinifi}>
           Set skorları{" "}
-          <span className="text-zinc-500">(opsiyonel)</span>
+          <span className="font-govde text-[13px] normal-case text-murekkep-silik">
+            (opsiyonel)
+          </span>
         </span>
-        <div className="grid grid-cols-[auto_1fr_auto_1fr] items-center gap-2">
-          <span className="text-xs text-zinc-500">Set</span>
-          <span className="text-xs text-zinc-500">Ben</span>
-          <span />
-          <span className="text-xs text-zinc-500">{rakipAdi}</span>
-
-          {[1, 2, 3].map((n) => (
-            <FragmentSet key={n} n={n} girdiSinifi={girdiSinifi} />
-          ))}
+        <div className="flex items-center gap-4 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+          <span className="w-6" />
+          <span className="w-14 text-center">Ben</span>
+          <span className="w-3" />
+          <span className="w-14 text-center">{rakipAdi}</span>
         </div>
+        {[1, 2, 3].map((n) => (
+          <div key={n} className="flex items-center gap-4">
+            <span className="w-6 font-veri text-[13px] text-murekkep-silik">
+              {n}.
+            </span>
+            <input
+              type="number"
+              name={`set${n}_ben`}
+              min={0}
+              max={99}
+              className={skorGirdisi}
+              aria-label={`${n}. set benim oyun sayım`}
+            />
+            <span className="w-3 text-center text-murekkep-silik">–</span>
+            <input
+              type="number"
+              name={`set${n}_rakip`}
+              min={0}
+              max={99}
+              className={skorGirdisi}
+              aria-label={`${n}. set rakibin oyun sayısı`}
+            />
+          </div>
+        ))}
       </div>
 
-      <label className="flex flex-col gap-1 text-sm">
-        Yer <span className="sr-only">(opsiyonel)</span>
+      <label className="flex flex-col gap-1.5">
+        <span className={etiketSinifi}>Yer</span>
         <input
           type="text"
           name="yer"
@@ -111,7 +145,7 @@ export function MacFormu({
       </label>
 
       {durum.hata && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+        <p className="border-l-4 border-toprak bg-yuzey-yukseltilmis px-3 py-2.5 text-sm">
           {durum.hata}
         </p>
       )}
@@ -119,46 +153,15 @@ export function MacFormu({
       <button
         type="submit"
         disabled={bekliyor}
-        className="mt-2 self-start rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+        className="mt-1 self-start border border-kort bg-kort px-6 py-3 font-govde text-[14px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort disabled:opacity-50"
       >
-        {bekliyor ? "Kaydediliyor..." : "Maçı kaydet"}
+        {bekliyor ? "Kaydediliyor…" : "Maçı kaydet"}
       </button>
 
-      <p className="text-xs leading-5 text-zinc-500">
-        Kazananı sen giriyorsun, rakibin onayı gerekmiyor. Yanlış girersen
-        ligi yöneten kişi düzeltebilir.
+      <p className="text-xs leading-5 text-murekkep-silik">
+        Kazananı sen giriyorsun, rakibin onayı gerekmiyor. Yanlış girersen ligi
+        yöneten kişi düzeltebilir.
       </p>
     </form>
-  );
-}
-
-function FragmentSet({
-  n,
-  girdiSinifi,
-}: {
-  n: number;
-  girdiSinifi: string;
-}) {
-  return (
-    <>
-      <span className="text-sm text-zinc-500">{n}.</span>
-      <input
-        type="number"
-        name={`set${n}_ben`}
-        min={0}
-        max={99}
-        className={girdiSinifi}
-        aria-label={`${n}. set benim oyun sayım`}
-      />
-      <span className="text-center text-zinc-400">-</span>
-      <input
-        type="number"
-        name={`set${n}_rakip`}
-        min={0}
-        max={99}
-        className={girdiSinifi}
-        aria-label={`${n}. set rakibin oyun sayısı`}
-      />
-    </>
   );
 }

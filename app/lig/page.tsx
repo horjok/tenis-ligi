@@ -3,88 +3,149 @@ import Link from "next/link";
 import { eloGoster, ligBilgisi } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function PuanTablosu() {
+import { MacKarti, type MacSatiri } from "./mac-karti";
+
+export default async function Anasayfa() {
   const lig = await ligBilgisi();
-  if (!lig) return null; // layout zaten uyarı gösteriyor
+  if (!lig) return null;
 
   const supabase = await createClient();
-  const { data: satirlar } = await supabase
-    .from("puan_tablosu")
-    .select("user_id, display_name, rating, matches_played, galibiyet, maglubiyet")
-    .eq("league_id", lig.ligId)
-    .eq("match_type", "singles")
-    .order("rating", { ascending: false });
 
-  if (!satirlar || satirlar.length === 0) {
-    return (
-      <div>
-        <h1 className="text-xl font-semibold">Puan tablosu</h1>
-        <p className="mt-4 text-sm text-zinc-500">
-          Henüz maç kaydedilmemiş. İlk maçı girdiğinizde tablo burada oluşur.
-        </p>
-        <Link
-          href="/lig/mac-ekle"
-          className="mt-6 inline-block rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
-        >
-          Maç ekle
-        </Link>
-      </div>
-    );
-  }
+  const [{ data: siralama }, { data: sonMaclar }] = await Promise.all([
+    supabase
+      .from("puan_tablosu")
+      .select("user_id, display_name, rating, matches_played, galibiyet, maglubiyet")
+      .eq("league_id", lig.ligId)
+      .eq("match_type", "singles")
+      .order("rating", { ascending: false }),
+    supabase
+      .from("mac_gecmisi")
+      .select("*")
+      .eq("league_id", lig.ligId)
+      .order("played_at", { ascending: false })
+      .limit(3),
+  ]);
+
+  const bosTablo = !siralama || siralama.length === 0;
 
   return (
-    <div>
-      <h1 className="text-xl font-semibold">Puan tablosu</h1>
-      <p className="mt-1 text-sm text-zinc-500">Tekler — Elo sıralaması</p>
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-6">
+      {/* ---------- Liderlik tablosu ---------- */}
+      <section className="flex flex-col gap-5 lg:col-span-8">
+        <header className="flex items-end justify-between border-b-4 border-kort pb-2">
+          <h2 className="text-[32px] md:text-[44px]">Liderlik Tablosu</h2>
+          <span className="mb-1.5 font-veri text-[12px] uppercase tracking-wider text-murekkep-silik">
+            Tekler
+          </span>
+        </header>
 
-      <div className="mt-6 overflow-x-auto">
-        <table className="w-full min-w-[420px] text-sm">
-          <thead>
-            <tr className="border-b border-zinc-200 text-left text-xs uppercase tracking-wide text-zinc-500 dark:border-zinc-800">
-              <th className="py-2 pr-3 font-medium">#</th>
-              <th className="py-2 pr-3 font-medium">Oyuncu</th>
-              <th className="py-2 pr-3 text-right font-medium">Elo</th>
-              <th className="py-2 pr-3 text-right font-medium">Maç</th>
-              <th className="py-2 text-right font-medium">G-M</th>
-            </tr>
-          </thead>
-          <tbody>
-            {satirlar.map((satir, sira) => {
+        {bosTablo ? (
+          <div className="border border-cizgi bg-yuzey-panel px-6 py-12 text-center">
+            <p className="text-sm text-murekkep-sonuk">
+              Henüz maç kaydedilmemiş. İlk maç girildiğinde tablo burada oluşur.
+            </p>
+            <Link
+              href="/lig/mac-ekle"
+              className="mt-6 inline-block border border-kort bg-kort px-6 py-3 font-govde text-[14px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort"
+            >
+              Maç ekle
+            </Link>
+          </div>
+        ) : (
+          <div className="border border-cizgi bg-yuzey-panel">
+            {/* Başlık satırı */}
+            <div className="grid grid-cols-12 gap-2 border-b border-cizgi bg-yuzey-yukseltilmis px-3 py-2.5 font-baslik text-[15px] uppercase tracking-wider text-murekkep-silik">
+              <div className="col-span-2 sm:col-span-1">#</div>
+              <div className="col-span-6 sm:col-span-5">Oyuncu</div>
+              <div className="col-span-2 text-right sm:col-span-3">G/M</div>
+              <div className="col-span-2 text-right sm:col-span-3">Elo</div>
+            </div>
+
+            {siralama.map((satir, sira) => {
               const benMiyim = satir.user_id === lig.kullaniciId;
+              const sonSatir = sira === siralama.length - 1;
+
               return (
-                <tr
+                <div
                   key={satir.user_id}
-                  className={`border-b border-zinc-100 dark:border-zinc-900 ${
-                    benMiyim ? "font-medium" : ""
-                  }`}
+                  className={[
+                    "grid grid-cols-12 items-center gap-2 border-l-4 px-3 py-2.5",
+                    sonSatir ? "" : "border-b border-b-cizgi",
+                    benMiyim
+                      ? "border-l-kort bg-yuzey-yukseltilmis"
+                      : "border-l-transparent",
+                  ].join(" ")}
                 >
-                  <td className="py-2.5 pr-3 text-zinc-500">{sira + 1}</td>
-                  <td className="py-2.5 pr-3">
-                    {satir.display_name}
+                  <div
+                    className={`col-span-2 veri text-[20px] sm:col-span-1 ${
+                      sira < 3 ? "text-murekkep" : "text-murekkep-silik"
+                    }`}
+                  >
+                    {sira + 1}
+                  </div>
+
+                  <div className="col-span-6 flex min-w-0 items-center gap-2 sm:col-span-5">
+                    <span
+                      className={`truncate font-baslik text-[20px] uppercase md:text-[26px] ${
+                        benMiyim ? "font-bold" : ""
+                      }`}
+                    >
+                      {satir.display_name}
+                    </span>
                     {benMiyim && (
-                      <span className="ml-2 text-xs text-zinc-500">(sen)</span>
+                      <span className="shrink-0 bg-kort px-1.5 py-0.5 font-veri text-[10px] uppercase tracking-wide text-tebesir">
+                        Sen
+                      </span>
                     )}
-                  </td>
-                  <td className="py-2.5 pr-3 text-right tabular-nums">
-                    {eloGoster(satir.rating)}
-                  </td>
-                  <td className="py-2.5 pr-3 text-right tabular-nums text-zinc-500">
-                    {satir.matches_played}
-                  </td>
-                  <td className="py-2.5 text-right tabular-nums text-zinc-500">
+                  </div>
+
+                  <div className="col-span-2 veri text-right text-[15px] text-murekkep-sonuk sm:col-span-3 sm:text-[18px]">
                     {satir.galibiyet}-{satir.maglubiyet}
-                  </td>
-                </tr>
+                  </div>
+
+                  <div
+                    className={`col-span-2 veri text-right text-[18px] sm:col-span-3 sm:text-[22px] ${
+                      benMiyim ? "font-bold" : ""
+                    }`}
+                  >
+                    {eloGoster(satir.rating)}
+                  </div>
+                </div>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+          </div>
+        )}
 
-      <p className="mt-6 text-xs leading-5 text-zinc-500">
-        Herkes 1000 puanla başlar. Kazanınca puan alır, kaybedince verir —
-        güçlü rakibi yenmek çok, zayıf rakibi yenmek az kazandırır.
-      </p>
+        <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
+          Herkes 1000 puanla başlar. Güçlü rakibi yenmek çok, zayıf rakibi
+          yenmek az kazandırır.
+        </p>
+      </section>
+
+      {/* ---------- Son maçlar ---------- */}
+      <section className="flex flex-col gap-5 lg:col-span-4">
+        <header className="flex items-end justify-between border-b-4 border-kort pb-2">
+          <h2 className="text-[24px] md:text-[30px]">Son Maçlar</h2>
+        </header>
+
+        {!sonMaclar || sonMaclar.length === 0 ? (
+          <p className="border border-dashed border-cizgi px-4 py-8 text-center text-sm text-murekkep-silik">
+            Henüz maç yok.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {(sonMaclar as MacSatiri[]).map((mac) => (
+              <MacKarti key={mac.match_id} mac={mac} />
+            ))}
+            <Link
+              href="/lig/maclar"
+              className="mt-1 w-full border-2 border-kort py-3 text-center font-govde text-[14px] font-bold uppercase tracking-wider transition-colors hover:bg-kort hover:text-tebesir"
+            >
+              Tüm maçlar
+            </Link>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

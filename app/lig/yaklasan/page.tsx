@@ -25,55 +25,63 @@ export default async function YaklasanMaclar() {
   );
 
   return (
-    <div>
-      <h1 className="text-xl font-semibold">Yaklaşan maçlar</h1>
-      <p className="mt-1 mb-6 max-w-xl text-sm leading-6 text-zinc-500">
+    <div className="flex flex-col gap-5">
+      <header className="flex items-end justify-between border-b-4 border-kort pb-2">
+        <h2 className="text-[32px] md:text-[44px]">Yaklaşan</h2>
+        <span className="mb-1.5 font-veri text-[12px] uppercase tracking-wider text-murekkep-silik">
+          {maclar.length} maç
+        </span>
+      </header>
+
+      <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
         Kesinleşmiş maçların. Oynadıktan sonra sonucu buradan gir — puanlar
         anında güncellenir.
       </p>
 
       {maclar.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-zinc-300 px-4 py-8 text-center dark:border-zinc-700">
-          <p className="text-sm text-zinc-500">Kesinleşmiş maçın yok.</p>
+        <div className="border border-dashed border-cizgi px-4 py-12 text-center">
+          <p className="text-sm text-murekkep-silik">Kesinleşmiş maçın yok.</p>
           <Link
             href="/lig/onerilerim"
-            className="mt-4 inline-block rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+            className="mt-6 inline-block border border-kort bg-kort px-6 py-3 font-govde text-[14px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort"
           >
             Önerilerine bak
           </Link>
         </div>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <ul className="flex flex-col gap-4">
           {maclar.map((mac) => {
             const gecmis = new Date(mac.dilim) < new Date();
 
             return (
               <li
                 key={mac.macId}
-                className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-800"
+                className="border border-cizgi bg-yuzey-panel"
               >
-                <div>
-                  <p className="text-sm font-medium capitalize">
-                    {dilimEtiketi(mac.dilim)}
-                  </p>
-                  <p className="mt-0.5 text-sm text-zinc-500">
-                    Rakip: {mac.rakipAd}
-                    {!gecmis && " · henüz oynanmadı"}
-                  </p>
-                </div>
+                <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="font-baslik text-[22px] uppercase">
+                      {mac.rakipAd}
+                    </p>
+                    <p className="mt-0.5 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                      {dilimEtiketi(mac.dilim)}
+                      {!gecmis && " · henüz oynanmadı"}
+                    </p>
+                  </div>
 
-                {gecmis ? (
-                  <SonucFormu
-                    macId={mac.macId}
-                    benimId={lig.kullaniciId}
-                    rakipId={mac.rakipId}
-                    rakipAd={mac.rakipAd}
-                  />
-                ) : (
-                  <span className="text-xs text-zinc-500">
-                    saati gelince sonuç girebilirsin
-                  </span>
-                )}
+                  {gecmis ? (
+                    <SonucFormu
+                      macId={mac.macId}
+                      benimId={lig.kullaniciId}
+                      rakipId={mac.rakipId}
+                      rakipAd={mac.rakipAd}
+                    />
+                  ) : (
+                    <span className="border border-cizgi px-3 py-1.5 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                      Saati bekleniyor
+                    </span>
+                  )}
+                </div>
               </li>
             );
           })}

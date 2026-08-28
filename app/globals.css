@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ============================================================================
+   Tenis Ligi — tasarım sistemi
+   Kaynak: sağlanan HTML mockup'lar (anasayfa, liderlik, giriş)
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+   Karakteri üç şey belirliyor:
+     1. Keskin köşeler. Hiçbir yerde yuvarlaklık yok — skor tabelası estetiği.
+     2. Üç ayrı yazı tipi, üç ayrı iş: Barlow Condensed başlıkları taşır,
+        IBM Plex Mono sayıları hizalar, Archivo okunacak metni yazar.
+     3. Kort mavisi zemin, tebeşir beyazı çizgi, kazanan için tenis topu sarısı.
+   ========================================================================= */
+
+:root {
+  /* Sayfa zemini ve paneller */
+  --yuzey: #f3f4f0;          /* tebeşir */
+  --yuzey-panel: #f9faf6;
+  --yuzey-yukseltilmis: #f3f4f0;
+
+  /* Metin */
+  --murekkep: #123b45;       /* kort mavisi, ana metin */
+  --murekkep-sonuk: #41484a;
+  --murekkep-silik: #71787b;
+
+  /* Çizgiler */
+  --cizgi: #dcdfd6;
+
+  /* Vurgu */
+  --hata: #ba1a1a;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --yuzey: #123b45;
+    --yuzey-panel: #123b45;
+    --yuzey-yukseltilmis: #162529;
+
+    --murekkep: #f3f4f0;
+    --murekkep-sonuk: #c0c8cb;
+    --murekkep-silik: #8a9295;
+
+    --cizgi: #3f484b;
+
+    --hata: #ffb4ab;
   }
 }
 
+@theme inline {
+  /* --- Tema duyarlı renkler --- */
+  --color-yuzey: var(--yuzey);
+  --color-yuzey-panel: var(--yuzey-panel);
+  --color-yuzey-yukseltilmis: var(--yuzey-yukseltilmis);
+  --color-murekkep: var(--murekkep);
+  --color-murekkep-sonuk: var(--murekkep-sonuk);
+  --color-murekkep-silik: var(--murekkep-silik);
+  --color-cizgi: var(--cizgi);
+  --color-hata: var(--hata);
+
+  /* --- Marka renkleri (iki temada da aynı) --- */
+  --color-kort: #123b45;     /* kort yapısı — dolgu ve butonlar */
+  --color-tebesir: #f3f4f0;  /* kort üstündeki çizgiler */
+  --color-kazanan: #c8dc3c;      /* kazanan vurgusu */
+  --color-toprak: #a8593c;   /* kaybeden / uyarı */
+
+  /* --- Yazı tipleri --- */
+  --font-baslik: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-govde: var(--font-archivo), system-ui, sans-serif;
+  --font-veri: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* --- Köşeler: hiçbiri yuvarlanmıyor ---
+     Bu satırlar sayesinde koddaki mevcut `rounded-md` gibi sınıflar
+     otomatik olarak keskinleşiyor; her bileşeni tek tek düzeltmek gerekmiyor. */
+  --radius-xs: 0;
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+  --radius-2xl: 0;
+  --radius-3xl: 0;
+  --radius-4xl: 0;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--yuzey);
+  color: var(--murekkep);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Başlıklar sıkışık ve büyük harf — mockup'lardaki tabela dili. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-barlow), "Arial Narrow", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* Sayılar hizalı dursun: puan, skor, saat. */
+.veri {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+/* Odak halkası da keskin olsun, yuvarlak değil. */
+:focus-visible {
+  outline: 2px solid var(--murekkep);
+  outline-offset: 2px;
 }

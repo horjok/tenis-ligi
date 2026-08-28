@@ -35,57 +35,68 @@ export function OneriKarti({
   }
 
   return (
-    <li className="rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-800">
-      <h2 className="text-sm font-semibold capitalize">{baslik}</h2>
-      <p className="mt-0.5 text-xs text-zinc-500">
-        {oneriler.length === 1
-          ? "1 kişi bu saatte müsait"
-          : `${oneriler.length} kişi bu saatte müsait`}
-      </p>
+    <li className="border border-cizgi bg-yuzey-panel">
+      {/* Dilim başlığı — bir saat, tek kart */}
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 border-b border-cizgi bg-yuzey-yukseltilmis px-4 py-2.5">
+        <h3 className="text-[20px] capitalize">{baslik}</h3>
+        <span className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+          {oneriler.length} kişi müsait
+        </span>
+      </div>
 
       {hata && (
-        <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+        <p className="border-b border-cizgi border-l-4 border-l-toprak px-4 py-2.5 text-sm">
           {hata}
         </p>
       )}
 
-      <ul className="mt-3 flex flex-col divide-y divide-zinc-100 dark:divide-zinc-900">
-        {oneriler.map((oneri) => {
+      <ul className="flex flex-col">
+        {oneriler.map((oneri, i) => {
           const mesgul = islemdeki === oneri.macId;
+          const sonSatir = i === oneriler.length - 1;
 
           return (
             <li
               key={oneri.macId}
-              className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2.5"
+              className={[
+                "flex flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-3",
+                sonSatir ? "" : "border-b border-cizgi",
+              ].join(" ")}
             >
-              <div className="text-sm">
-                <span className="font-medium">{oneri.rakipAd}</span>
+              <div className="min-w-0">
+                <p className="truncate font-baslik text-[22px] uppercase">
+                  {oneri.rakipAd}
+                </p>
                 {oneri.benKabulEttim ? (
-                  <span className="ml-2 text-xs text-emerald-700 dark:text-emerald-400">
-                    kabul ettin, {oneri.rakipAd} bekleniyor
-                  </span>
+                  <p className="mt-0.5 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                    Kabul ettin · {oneri.rakipAd} bekleniyor
+                  </p>
                 ) : oneri.rakipKabulEtti ? (
-                  <span className="ml-2 text-xs text-amber-700 dark:text-amber-400">
-                    {oneri.rakipAd} kabul etti, seni bekliyor
-                  </span>
+                  <p className="mt-0.5 font-veri text-[11px] uppercase tracking-wide text-murekkep">
+                    Kabul etti · seni bekliyor
+                  </p>
                 ) : null}
               </div>
 
-              {!oneri.benKabulEttim && (
+              {oneri.benKabulEttim ? (
+                <span className="border border-cizgi px-3 py-1.5 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                  Bekleniyor
+                </span>
+              ) : (
                 <div className="flex gap-2">
                   <button
                     type="button"
                     disabled={mesgul}
                     onClick={() => calistir(oneri.macId, true)}
-                    className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+                    className="border border-kort bg-kort px-4 py-2 font-govde text-[13px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort disabled:opacity-50"
                   >
-                    {mesgul ? "..." : "Kabul et"}
+                    {mesgul ? "…" : "Kabul et"}
                   </button>
                   <button
                     type="button"
                     disabled={mesgul}
                     onClick={() => calistir(oneri.macId, false)}
-                    className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs disabled:opacity-50 dark:border-zinc-700"
+                    className="border border-cizgi px-4 py-2 font-govde text-[13px] font-bold uppercase tracking-wider text-murekkep-sonuk transition-colors hover:border-toprak hover:text-toprak disabled:opacity-50"
                   >
                     Reddet
                   </button>

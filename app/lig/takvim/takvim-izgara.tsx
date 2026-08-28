@@ -64,22 +64,27 @@ export function TakvimIzgara({
   return (
     <div>
       {hata && (
-        <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+        <p className="mb-4 border-l-4 border-toprak bg-yuzey-yukseltilmis px-3 py-2.5 text-sm text-murekkep">
           {hata}
         </p>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="border-separate border-spacing-1">
+      <div className="overflow-x-auto border border-cizgi bg-yuzey-panel">
+        <table className="w-full border-collapse">
           <thead>
-            <tr>
-              <th className="sticky left-0 z-10 bg-[var(--background)]" />
+            <tr className="bg-yuzey-yukseltilmis">
+              <th className="sticky left-0 z-10 bg-yuzey-yukseltilmis" />
               {gunler.map((gun) => {
                 const { gunAdi, tarih } = gunEtiketi(gun);
                 return (
-                  <th key={gun} className="px-1 pb-1 text-center">
-                    <div className="text-xs font-medium">{gunAdi}</div>
-                    <div className="text-[10px] font-normal text-zinc-500">
+                  <th
+                    key={gun}
+                    className="border-l border-cizgi px-1 py-2 text-center"
+                  >
+                    <div className="font-baslik text-[14px] uppercase tracking-wide">
+                      {gunAdi}
+                    </div>
+                    <div className="font-veri text-[10px] font-normal text-murekkep-silik">
                       {tarih}
                     </div>
                   </th>
@@ -89,9 +94,9 @@ export function TakvimIzgara({
           </thead>
           <tbody>
             {SAATLER.map((saat) => (
-              <tr key={saat}>
-                <th className="sticky left-0 z-10 bg-[var(--background)] pr-2 text-right text-xs font-normal text-zinc-500">
-                  {String(saat).padStart(2, "0")}:00
+              <tr key={saat} className="border-t border-cizgi">
+                <th className="sticky left-0 z-10 bg-yuzey-yukseltilmis px-2 text-right font-veri text-[12px] font-medium text-murekkep-silik">
+                  {String(saat).padStart(2, "0")}
                 </th>
 
                 {gunler.map((gun) => {
@@ -102,7 +107,7 @@ export function TakvimIzgara({
                   const mesgul = islemdeki.has(anahtar);
 
                   return (
-                    <td key={gun} className="p-0">
+                    <td key={gun} className="border-l border-cizgi p-0">
                       <button
                         type="button"
                         disabled={gecmis || mesgul}
@@ -115,12 +120,15 @@ export function TakvimIzgara({
                             : undefined
                         }
                         className={[
-                          "h-8 w-11 rounded text-[11px] tabular-nums transition-colors",
+                          "flex h-9 w-full min-w-[42px] items-center justify-center",
+                          "veri text-[12px] transition-colors",
                           gecmis
-                            ? "cursor-not-allowed bg-zinc-50 text-zinc-300 dark:bg-zinc-900/50 dark:text-zinc-700"
+                            ? "cursor-not-allowed text-murekkep-silik/40"
                             : benim
-                              ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                              : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700",
+                              ? "bg-kazanan text-kort"
+                              : digerleri > 0
+                                ? "bg-yuzey-yukseltilmis text-murekkep-sonuk hover:bg-kort hover:text-tebesir"
+                                : "text-murekkep-silik hover:bg-yuzey-yukseltilmis",
                           mesgul ? "opacity-50" : "",
                         ].join(" ")}
                       >
@@ -135,17 +143,19 @@ export function TakvimIzgara({
         </table>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-zinc-500">
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded bg-emerald-600" />
+      <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-3 w-3 bg-kazanan" />
           Müsaitsin
         </span>
-        <span className="flex items-center gap-1.5">
-          <span className="inline-block h-3 w-3 rounded bg-zinc-100 dark:bg-zinc-800" />
-          Boş
+        <span className="flex items-center gap-2">
+          <span className="inline-block h-3 w-3 border border-cizgi bg-yuzey-yukseltilmis" />
+          Başkası müsait
         </span>
-        <span>Kutudaki sayı: o saatte müsait olan diğer oyuncu sayısı</span>
-        {bekleyenGecis && <span>güncelleniyor...</span>}
+        <span className="normal-case tracking-normal">
+          Kutudaki sayı: o saatte müsait olan diğer oyuncu sayısı
+        </span>
+        {bekleyenGecis && <span>güncelleniyor…</span>}
       </div>
     </div>
   );

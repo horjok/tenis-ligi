@@ -7,9 +7,9 @@ import { sonucGir, type SonucDurumu } from "@/app/actions/sonuc";
 
 const BOS: SonucDurumu = {};
 
-const girdiSinifi =
-  "rounded-md border border-zinc-300 px-2 py-1.5 text-sm outline-none " +
-  "focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-zinc-100";
+const skorGirdisi =
+  "w-12 border border-cizgi bg-transparent px-1 py-1.5 text-center veri text-[16px] " +
+  "focus:border-kort focus:outline-none";
 
 export function SonucFormu({
   macId,
@@ -42,7 +42,7 @@ export function SonucFormu({
       <button
         type="button"
         onClick={() => setAcik(true)}
-        className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+        className="border border-kort bg-kort px-4 py-2 font-govde text-[13px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort"
       >
         Sonuç gir
       </button>
@@ -50,43 +50,45 @@ export function SonucFormu({
   }
 
   return (
-    <form action={gonder} className="mt-3 flex w-full flex-col gap-3">
+    <form action={gonder} className="mt-3 flex w-full flex-col gap-4">
       <input type="hidden" name="macId" value={macId} />
 
-      <fieldset className="flex flex-wrap items-center gap-4 text-sm">
-        <legend className="mb-1 text-xs text-zinc-500">Kazanan</legend>
-        <label className="flex items-center gap-2">
+      <fieldset className="flex flex-wrap items-center gap-5">
+        <legend className="mb-1 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+          Kazanan
+        </legend>
+        <label className="flex items-center gap-2 font-baslik text-[18px] uppercase">
           <input type="radio" name="kazanan" value={benimId} required />
           Ben
         </label>
-        <label className="flex items-center gap-2">
+        <label className="flex items-center gap-2 font-baslik text-[18px] uppercase">
           <input type="radio" name="kazanan" value={rakipId} />
           {rakipAd}
         </label>
       </fieldset>
 
       <div>
-        <p className="mb-1 text-xs text-zinc-500">
+        <p className="mb-2 font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
           Set skorları (opsiyonel) — ben / {rakipAd}
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           {[1, 2, 3].map((n) => (
-            <span key={n} className="flex items-center gap-1">
+            <span key={n} className="flex items-center gap-1.5">
               <input
                 type="number"
                 name={`set${n}_ben`}
                 min={0}
                 max={99}
-                className={`${girdiSinifi} w-14`}
+                className={skorGirdisi}
                 aria-label={`${n}. set benim oyun sayım`}
               />
-              <span className="text-zinc-400">-</span>
+              <span className="text-murekkep-silik">–</span>
               <input
                 type="number"
                 name={`set${n}_rakip`}
                 min={0}
                 max={99}
-                className={`${girdiSinifi} w-14`}
+                className={skorGirdisi}
                 aria-label={`${n}. set ${rakipAd} oyun sayısı`}
               />
             </span>
@@ -99,11 +101,11 @@ export function SonucFormu({
         name="yer"
         maxLength={120}
         placeholder="Yer (opsiyonel)"
-        className={`${girdiSinifi} max-w-xs`}
+        className="max-w-xs border border-cizgi bg-transparent px-3 py-2 text-sm placeholder:text-murekkep-silik focus:border-kort focus:outline-none"
       />
 
       {durum.hata && (
-        <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+        <p className="border-l-4 border-toprak bg-yuzey-yukseltilmis px-3 py-2.5 text-sm">
           {durum.hata}
         </p>
       )}
@@ -112,14 +114,14 @@ export function SonucFormu({
         <button
           type="submit"
           disabled={bekliyor}
-          className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900"
+          className="border border-kort bg-kort px-4 py-2 font-govde text-[13px] font-bold uppercase tracking-wider text-tebesir transition-colors hover:bg-kazanan hover:text-kort disabled:opacity-50"
         >
-          {bekliyor ? "Kaydediliyor..." : "Kaydet"}
+          {bekliyor ? "Kaydediliyor…" : "Kaydet"}
         </button>
         <button
           type="button"
           onClick={() => setAcik(false)}
-          className="rounded-md border border-zinc-300 px-3 py-1.5 text-xs dark:border-zinc-700"
+          className="border border-cizgi px-4 py-2 font-govde text-[13px] font-bold uppercase tracking-wider text-murekkep-sonuk transition-colors hover:text-murekkep"
         >
           Vazgeç
         </button>

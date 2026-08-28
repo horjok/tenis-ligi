@@ -27,11 +27,16 @@ export default async function MacEkle() {
   const bugun = new Date().toISOString().slice(0, 10);
 
   return (
-    <div>
-      <h1 className="text-xl font-semibold">Maç ekle</h1>
-      <p className="mt-1 mb-6 text-sm text-zinc-500">
-        Oynadığın bir maçı kaydet. Elo puanları anında güncellenir.
+    <div className="flex flex-col gap-5">
+      <header className="border-b-4 border-kort pb-2">
+        <h2 className="text-[32px] md:text-[44px]">Maç Ekle</h2>
+      </header>
+
+      <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+        Takvim dışında oynadığın bir maçı kaydet. Elo puanları anında
+        güncellenir.
       </p>
+
       <MacFormu oyuncular={oyuncular} bugun={bugun} />
     </div>
   );

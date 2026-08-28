@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Deno kodu — Next.js kural setiyle denetlenmesi anlamsız.
+    "supabase/functions/**",
   ]),
 ]);
 

@@ -64,9 +64,9 @@ export default async function Onerilerim() {
       )}
 
       <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
-        Kabul ettiğinde o saatteki diğer önerilerin iptal olmaz — rakibin
-        reddederse elin boş kalmasın diye. Maç ancak iki taraf da kabul edince
-        kesinleşir; o an diğer önerilerin kapanır.
+        Kabul etmen maçı kesinleştirmez, rakibinin de kabul etmesi gerekir.
+        O ana kadar aynı saatteki diğer önerilerin açık kalır; maç kesinleşince
+        kapanırlar.
       </p>
     </div>
   );

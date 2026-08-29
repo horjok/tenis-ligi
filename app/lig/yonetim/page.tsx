@@ -156,10 +156,10 @@ export default async function Yonetim() {
       <section className="flex flex-col gap-4">
         <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Sezonlar</h3>
         <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
-          Sezon yalnızca bir tarih aralığıdır. Maç kayıtlarına hiçbir şey
-          yazılmaz, Elo sıfırlanmaz. Sıralama o aralıkta{" "}
-          <strong>kazanılan puana</strong> göre hesaplanır — sezonun şampiyonu
-          en yüksek Elo&apos;lu oyuncu değil, en çok ilerleyendir.
+          Sezon sadece bir tarih aralığı; puanlar sıfırlanmaz. Sezon
+          sıralaması o tarihler arasında{" "}
+          <strong>kazanılan puanı</strong> gösterir — şampiyon, en yüksek
+          puanlı kişi değil, o dönemde en çok ilerleyen kişidir.
         </p>
 
         <SezonOlusturFormu />
@@ -213,9 +213,9 @@ export default async function Yonetim() {
           Puanları Yeniden Hesapla
         </h3>
         <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
-          Elo zincirleme çalışır: bir maçın sonucu, o ana kadarki puanlara
-          bağlıdır. Hatalı bir maçı sildikten sonra bunu çalıştır — tüm puanlar
-          1000&apos;e döner ve maçlar tarih sırasıyla baştan işlenir.
+          Bir maçı silersen puanlar kendiliğinden düzelmez, çünkü her maçın
+          sonucu ondan öncekilere bağlı. Bunu çalıştırınca herkes 1000
+          puandan başlar ve bütün maçlar sırayla yeniden hesaplanır.
         </p>
         <form action={puanlariYenidenHesapla}>
           <button

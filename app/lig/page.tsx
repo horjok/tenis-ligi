@@ -130,8 +130,8 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
           <p className="text-xs leading-5 text-murekkep-silik">
             {gunGoster(seciliSezon.starts_on)} —{" "}
             {seciliSezon.ends_on ? gunGoster(seciliSezon.ends_on) : "sürüyor"}.
-            Sıralama <strong>o sezonda kazanılan puana</strong> göre; en yüksek
-            Elo&apos;ya sahip olan değil, en çok ilerleyen önde.
+            Sıralama <strong>bu tarihler arasında kazanılan puana</strong>{" "}
+            göre — en yüksek puanlı değil, en çok ilerleyen önde.
           </p>
         )}
 
@@ -244,9 +244,9 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
 
         <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
           {seciliSezon
-            ? "Elo sezon başında sıfırlanmaz, kesintisiz akar. Sezon yalnızca bir tarih aralığıdır."
+            ? "Puanlar sezon başında sıfırlanmaz. Sezon sıralaması yalnızca o tarihler arasında ne kadar ilerlediğini gösterir."
             : ciftler
-              ? "Çiftler puanı teklerden tamamen ayrı bir havuz. Takımın gücü iki oyuncunun ortalaması; kazanılan puan ikisine de aynı miktarda yazılır."
+              ? "Çiftler puanın teklerden ayrı tutulur. Takımın gücü iki oyuncunun ortalaması; kazanılan puanı ikiniz de aynı miktarda alırsınız."
               : "Herkes 1000 puanla başlar. Güçlü rakibi yenmek çok, zayıf rakibi yenmek az kazandırır."}
         </p>
       </section>

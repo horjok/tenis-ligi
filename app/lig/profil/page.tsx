@@ -118,9 +118,8 @@ export default async function Profil() {
         {bekleyenAdres && (
           <p className="border-l-4 border-kazanan bg-yuzey-yukseltilmis px-3 py-2.5 text-sm leading-6">
             <strong className="font-veri">{bekleyenAdres}</strong> adresine bir
-            doğrulama bağlantısı gönderildi. Bağlantıya tıklanana kadar bu
-            adres kullanılmaz — yanlış yazılmış bir adrese aylarca mail
-            gitmesini böyle engelliyoruz.
+            doğrulama bağlantısı gönderdik. Tıklayana kadar bu adrese mail
+            gitmez. Bağlantı 24 saat geçerli.
           </p>
         )}
 
@@ -146,18 +145,22 @@ export default async function Profil() {
             Kullanıcı adı
           </span>
           <span className="font-veri text-[15px]">{profil?.username ?? "—"}</span>
+          {/* Değiştirilemiyor çünkü giriş kimliği (<ad>@tenis-ligi.local)
+              buna bağlı. Kullanıcıya sebebi değil sonucu söylüyoruz. */}
           <span className="text-xs text-murekkep-silik">
-            (değiştirilemez — giriş kimliğin buna bağlı)
+            Giriş yaparken bunu yazıyorsun. Değiştirilemez.
           </span>
         </div>
 
         <AdFormu mevcutAd={lig.gorunenAd} />
 
         <div className="border-t border-cizgi pt-6">
+          {/* Mevcut şifrenin sorulma sebebi: oturum tek başına yeterli
+              olsaydı, açık unutulmuş bir tarayıcının başına geçen biri şifreyi
+              değiştirip hesabı ele geçirebilirdi. Bu gerekçe kullanıcıyı
+              ilgilendirmiyor; ekranda ne yapacağı yazıyor. */}
           <p className="mb-4 max-w-xl text-sm leading-6 text-murekkep-sonuk">
-            Şifreni değiştirmek için mevcut şifreni de yazman gerekiyor.
-            Sebebi: açık unutulmuş bir tarayıcının başına geçen biri, sadece
-            oturum yeterli olsaydı şifreni değiştirip hesabı ele geçirebilirdi.
+            Güvenlik için mevcut şifreni de soruyoruz.
           </p>
           <SifreFormu />
         </div>

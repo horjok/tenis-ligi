@@ -77,7 +77,9 @@ export async function epostaEkle(
   if (gonderimHatasi) {
     console.error("Doğrulama maili gönderilemedi:", gonderimHatasi);
     return {
-      hata: `Adres kaydedildi ama doğrulama maili gönderilemedi. Az sonra adresi tekrar yazarak yeniden deneyebilirsin.`,
+      hata:
+        "Adresin kaydedildi ama doğrulama maili gönderilemedi. " +
+        "Biraz sonra adresi tekrar yazıp dene.",
     };
   }
 
@@ -85,7 +87,9 @@ export async function epostaEkle(
   // Kullanıcıya "gönderildi" demek yanlış olur.
   if ((sonuc as { durum?: string } | null)?.durum === "kuru") {
     return {
-      bilgi: `${adres} kaydedildi. Mail gönderimi henüz açık değil (Resend anahtarı tanımlı değil), o yüzden bağlantı gönderilmedi — Edge Function günlüğünde duruyor.`,
+      bilgi:
+        `${adres} kaydedildi, ama mail gönderimi henüz açık olmadığı için ` +
+        "doğrulama bağlantısı gitmedi. Ligi yöneten kişiye söyle.",
     };
   }
 
@@ -162,7 +166,10 @@ export async function tokenIleBildirimKapat(
   // Geçersiz uuid biçimi buraya hata olarak döner; kullanıcıya ayrı bir
   // mesaj göstermiyoruz — "bu token var mı yok mu" sorusunu cevaplamayalım.
   if (error || data !== true) {
-    return { hata: "Bu bağlantı tanınmadı. Profil sayfandan da kapatabilirsin." };
+    return {
+      hata:
+        "Bu bağlantı çalışmıyor. Bildirimleri profil sayfandan da kapatabilirsin.",
+    };
   }
 
   return { bilgi: "Bildirimler kapatıldı. Artık sana mail gönderilmeyecek." };

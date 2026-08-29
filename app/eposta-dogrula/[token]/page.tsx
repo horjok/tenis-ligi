@@ -18,7 +18,7 @@ const MESAJLAR: Record<string, { baslik: string; aciklama: string }> = {
   gecersiz: {
     baslik: "Bağlantı tanınmadı",
     aciklama:
-      "Bu bağlantı bize ait değil ya da çok eski. Profil sayfandan adresini tekrar ekleyip yeni bir bağlantı isteyebilirsin.",
+      "Bu bağlantı çalışmıyor ya da çok eski. Profil sayfandan adresini tekrar ekleyerek yeni bir bağlantı isteyebilirsin.",
   },
   kullanilmis: {
     baslik: "Bağlantı zaten kullanılmış",

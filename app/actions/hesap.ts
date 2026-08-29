@@ -47,7 +47,7 @@ export async function adiDegistir(
 
   if (error) {
     console.error("Ad değiştirilemedi:", error.code, error.message);
-    return { hata: "Ad değiştirilemedi. Tekrar dener misin?" };
+    return { hata: "Adın kaydedilemedi. Tekrar dener misin?" };
   }
 
   revalidatePath("/lig/profil");
@@ -135,7 +135,7 @@ export async function sifreDegistir(
 
   return {
     bilgi:
-      "Şifren değiştirildi. Bu cihazdaki oturumun açık kalıyor; " +
-      "diğer cihazlarda yeni şifreyle gireceksin.",
+      "Şifren değişti. Burada açık kalıyorsun; başka cihazlarda yeni " +
+      "şifrenle gireceksin.",
   };
 }

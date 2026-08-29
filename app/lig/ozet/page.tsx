@@ -150,7 +150,8 @@ export default async function HaftalikOzet() {
 
       {maclar.length === 0 && (
         <p className="text-xs leading-5 text-murekkep-silik">
-          Bu hafta maç oynanmamış. Takvimi doldurmak eşleştirmeyi tetikler.
+          Bu hafta maç oynanmamış. Takvimde müsait saatlerini işaretleyen
+          olursa maç önerileri çıkmaya başlar.
         </p>
       )}
     </div>

@@ -132,13 +132,14 @@ export async function girisYap(
     }
 
     // Buraya düşen her şey kullanıcının hatası DEĞİL: 401 (anahtar geçersiz),
-    // 5xx, ağ hatası. Kodu ekranda gösteriyoruz ki sunucu günlüğüne
-    // erişemeyen biri de sorunu bildirebilsin.
+    // 5xx, ağ hatası. Ayrıntı sunucu günlüğüne gidiyor; ekranda yalnızca
+    // "sende bir sorun yok, tekrar dene" mesajı var. Teşhis için gereken
+    // durum kodu aşağıdaki console.error satırında.
     console.error("Giriş servisi hatası:", error.status, error.code, error.message);
     return {
-      hata: `Giriş servisine ulaşılamadı (${error.status ?? "?"}${
-        error.code ? " / " + error.code : ""
-      }). Şifren yanlış olduğu için değil — sistem yapılandırmasında bir sorun var.`,
+      hata:
+        "Şu an giriş yapılamıyor. Şifrenle ilgisi yok, sorun bizde. " +
+        "Birkaç dakika sonra tekrar dene; sürerse ligi yöneten kişiye haber ver.",
     };
   }
 

@@ -127,7 +127,7 @@ export function GirisFormu() {
 
       {kayitModu && (
         <p className="mt-6 max-w-sm text-xs leading-5 text-murekkep-silik">
-          E-posta istemiyoruz. Şifreni unutursan ligi yöneten kişi sıfırlar.
+          E-posta istemiyoruz. Şifreni unutursan ligi yöneten kişi sıfırlayabilir.
         </p>
       )}
     </div>

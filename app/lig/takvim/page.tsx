@@ -63,9 +63,8 @@ export default async function Takvim() {
       />
 
       <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
-        İşaretini istediğin zaman kaldırabilirsin. Ama o saat için kesinleşmiş
-        bir maçın varsa kaldıramazsın — sözünü verdiğin maçtan takvimi silerek
-        çıkılmıyor.
+        İşaretini istediğin zaman kaldırabilirsin. O saatte kesinleşmiş bir
+        maçın varsa kaldıramazsın.
       </p>
     </div>
   );

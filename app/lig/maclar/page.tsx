@@ -116,8 +116,8 @@ export default async function MacGecmisi(props: PageProps<"/lig/maclar">) {
       )}
 
       <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
-        Elo değişimi her iki taraf için ayrı gösterilir. Çiftlerde takımdaki
-        iki oyuncu da aynı miktarı alır.
+        Kazanan ne kadar puan aldıysa kaybeden o kadar kaybeder. Çiftlerde
+        takımdaki iki oyuncu da aynı puanı alır.
       </p>
     </div>
   );

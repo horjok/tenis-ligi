@@ -113,10 +113,33 @@ export async function girisYap(
     password: sifre,
   });
 
-  // Kullanıcı adı mı yanlış şifre mi, ayırt ETMİYORUZ. Ayırt edersek
-  // "bu kullanıcı adı var mı" sorusunu dışarıya cevaplamış oluruz.
   if (error) {
-    return { hata: "Kullanıcı adı veya şifre hatalı." };
+    // Kullanıcı adı mı yanlış şifre mi, ayırt ETMİYORUZ. Ayırt edersek
+    // "bu kullanıcı adı var mı" sorusunu dışarıya cevaplamış oluruz.
+    //
+    // AMA bu gizlilik kuralı yalnızca KİMLİK hatalarını kapsıyor. Eskiden
+    // buradaki tek satır her hatayı aynı mesaja çeviriyordu: hız sınırını,
+    // yanlış API anahtarını, ağ kopmasını da. Sonuç, yapılandırma bozukken
+    // "şifren yanlış" yazan ve kimsenin sebebini bulamadığı bir ekrandı.
+    if (error.code === "invalid_credentials" || error.status === 400) {
+      return { hata: "Kullanıcı adı veya şifre hatalı." };
+    }
+
+    if (error.code === "over_request_rate_limit" || error.status === 429) {
+      return {
+        hata: "Çok fazla deneme yapıldı. Birkaç dakika bekleyip tekrar dene.",
+      };
+    }
+
+    // Buraya düşen her şey kullanıcının hatası DEĞİL: 401 (anahtar geçersiz),
+    // 5xx, ağ hatası. Kodu ekranda gösteriyoruz ki sunucu günlüğüne
+    // erişemeyen biri de sorunu bildirebilsin.
+    console.error("Giriş servisi hatası:", error.status, error.code, error.message);
+    return {
+      hata: `Giriş servisine ulaşılamadı (${error.status ?? "?"}${
+        error.code ? " / " + error.code : ""
+      }). Şifren yanlış olduğu için değil — sistem yapılandırmasında bir sorun var.`,
+    };
   }
 
   redirect("/");

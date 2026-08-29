@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -459,6 +459,41 @@ export type Database = {
           },
         ]
       }
+      seasons: {
+        Row: {
+          created_at: string
+          ends_on: string | null
+          id: string
+          league_id: string
+          name: string
+          starts_on: string
+        }
+        Insert: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          league_id: string
+          name: string
+          starts_on: string
+        }
+        Update: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          league_id?: string
+          name?: string
+          starts_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasons_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       lig_oyunculari: {
@@ -545,6 +580,28 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ratings_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sezon_puanlari: {
+        Row: {
+          display_name: string | null
+          galibiyet: number | null
+          kazanc: number | null
+          league_id: string | null
+          mac: number | null
+          season_id: string | null
+          sezon_adi: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasons_league_id_fkey"
             columns: ["league_id"]
             isOneToOne: false
             referencedRelation: "leagues"

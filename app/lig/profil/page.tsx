@@ -2,6 +2,7 @@ import { TemaSecici } from "@/app/tema-secici";
 import { eloGoster, ligBilgisi } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
+import { AdFormu, SifreFormu } from "./hesap-formlari";
 import {
   EpostaFormu,
   EpostaSilButonu,
@@ -25,6 +26,12 @@ export default async function Profil() {
       .eq("league_id", lig.ligId)
       .eq("user_id", lig.kullaniciId),
   ]);
+
+  const { data: profil } = await supabase
+    .from("profiles")
+    .select("username")
+    .eq("id", lig.kullaniciId)
+    .maybeSingle();
 
   const puan = (tur: string) =>
     (oyuncu ?? []).find((s) => s.match_type === tur) ?? null;
@@ -128,6 +135,32 @@ export default async function Profil() {
           altındaki bağlantı da aynı işi yapar.
         </p>
         <TercihAnahtari acik={bildirimAcik} />
+      </section>
+
+      {/* ---------- Hesap ---------- */}
+      <section className="flex flex-col gap-6">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Hesap</h3>
+
+        <div className="flex flex-wrap items-center gap-3 border border-cizgi bg-yuzey-panel px-4 py-3">
+          <span className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+            Kullanıcı adı
+          </span>
+          <span className="font-veri text-[15px]">{profil?.username ?? "—"}</span>
+          <span className="text-xs text-murekkep-silik">
+            (değiştirilemez — giriş kimliğin buna bağlı)
+          </span>
+        </div>
+
+        <AdFormu mevcutAd={lig.gorunenAd} />
+
+        <div className="border-t border-cizgi pt-6">
+          <p className="mb-4 max-w-xl text-sm leading-6 text-murekkep-sonuk">
+            Şifreni değiştirmek için mevcut şifreni de yazman gerekiyor.
+            Sebebi: açık unutulmuş bir tarayıcının başına geçen biri, sadece
+            oturum yeterli olsaydı şifreni değiştirip hesabı ele geçirebilirdi.
+          </p>
+          <SifreFormu />
+        </div>
       </section>
 
       {/* ---------- Görünüm ---------- */}

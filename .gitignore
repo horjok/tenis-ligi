@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI ajan dosyalari
+# `next dev` bunlari ortamda bir AI ajani algiladiginda kendiliginden
+# yeniden yaratiyor (node_modules/next/dist/server/lib/generate-agent-files.js)
+# ve kapatan bir ayar yok. Yerelde olusmalari sorun degil; depoya girmesinler.
+AGENTS.md
+CLAUDE.md

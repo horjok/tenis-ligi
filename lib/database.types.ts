@@ -522,14 +522,13 @@ export type Database = {
           league_id: string | null
           location: string | null
           match_id: string | null
-          oyuncu1_ad: string | null
-          oyuncu1_elo_degisim: number | null
-          oyuncu1_id: string | null
-          oyuncu2_ad: string | null
-          oyuncu2_elo_degisim: number | null
-          oyuncu2_id: string | null
+          match_type: Database["public"]["Enums"]["match_type"] | null
           played_at: string | null
           setler: Json | null
+          takim1_elo_degisim: number | null
+          takim1_oyuncular: Json | null
+          takim2_elo_degisim: number | null
+          takim2_oyuncular: Json | null
           winner_team: number | null
         }
         Relationships: [
@@ -594,6 +593,7 @@ export type Database = {
           kazanc: number | null
           league_id: string | null
           mac: number | null
+          match_type: Database["public"]["Enums"]["match_type"] | null
           season_id: string | null
           sezon_adi: string | null
           user_id: string | null
@@ -622,6 +622,19 @@ export type Database = {
         }[]
       }
       bildirimden_cik: { Args: { p_token: string }; Returns: boolean }
+      cift_mac_kaydet: {
+        Args: {
+          p_kazanan_takim: number
+          p_league_id: string
+          p_location?: string
+          p_partner_id: string
+          p_played_at: string
+          p_rakip1_id: string
+          p_rakip2_id: string
+          p_sets?: Json
+        }
+        Returns: string
+      }
       dogrulama_maili_verisi: {
         Args: { p_user_id: string }
         Returns: {

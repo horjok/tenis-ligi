@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { TemaDugmesi } from "@/app/tema-secici";
 import { createClient } from "@/lib/supabase/server";
 
 import { GirisFormu } from "./giris-formu";
@@ -14,8 +15,11 @@ export default async function GirisSayfasi() {
 
   return (
     <main className="flex flex-1 flex-col px-4 py-10 md:justify-center md:px-[12%] md:py-16">
-      <header className="mb-8 md:mb-12">
+      {/* Menü burada yok; tema düğmesi olmasa giriş yapmadan tema
+          değiştirilemezdi. */}
+      <header className="mb-8 flex items-start justify-between gap-4 md:mb-12">
         <h1 className="text-[32px] md:text-[44px]">Tenis Ligi</h1>
+        <TemaDugmesi />
       </header>
 
       <GirisFormu />

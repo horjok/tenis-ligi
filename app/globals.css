@@ -11,7 +11,38 @@
      3. Kort mavisi zemin, tebeşir beyazı çizgi, kazanan için tenis topu sarısı.
    ========================================================================= */
 
+/* ----------------------------------------------------------------------------
+   Tema
+   ----------------------------------------------------------------------------
+   Üç durum var: sistem (varsayılan), açık, koyu.
+
+   Kullanıcı seçim yapmadığında `data-theme` HİÇ YAZILMAZ ve işletim
+   sisteminin tercihi geçerli olur. Seçim yapıldığında kök öğeye
+   data-theme="light" | "dark" yazılır ve sistemi ezer.
+
+   Aşağıdaki üç blok bu yüzden böyle kurulu:
+     :root                                  → açık palet (temel)
+     @media koyu + :not([data-theme=light]) → sistem koyu diyorsa, kullanıcı
+                                              "açık" demediyse koyu
+     :root[data-theme="dark"]               → kullanıcı koyu dediyse, sistem
+                                              ne derse desin koyu
+
+   :not([data-theme="light"]) koruması şart: onsuz sistemi koyu olan bir
+   kullanıcı "açık" seçemez, medya sorgusu seçimini geri ezerdi.
+   -------------------------------------------------------------------------- */
+
 :root {
+  /* Koyu palet burada BİR KEZ tanımlı; aşağıdaki iki blok sadece atıyor. */
+  --koyu-yuzey: #123b45;
+  --koyu-yuzey-panel: #123b45;
+  --koyu-yuzey-yukseltilmis: #162529;
+  --koyu-murekkep: #f3f4f0;
+  --koyu-murekkep-sonuk: #c0c8cb;
+  --koyu-murekkep-silik: #8a9295;
+  --koyu-cizgi: #3f484b;
+  --koyu-hata: #ffb4ab;
+
+  /* --- Aktif palet: açık --- */
   /* Sayfa zemini ve paneller */
   --yuzey: #f3f4f0;          /* tebeşir */
   --yuzey-panel: #f9faf6;
@@ -27,22 +58,36 @@
 
   /* Vurgu */
   --hata: #ba1a1a;
+
+  /* Tarayıcının kendi çizdiği parçalar (tarih seçici, kaydırma çubuğu,
+     seçim kutusu okları) da temaya uysun diye. */
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --yuzey: #123b45;
-    --yuzey-panel: #123b45;
-    --yuzey-yukseltilmis: #162529;
-
-    --murekkep: #f3f4f0;
-    --murekkep-sonuk: #c0c8cb;
-    --murekkep-silik: #8a9295;
-
-    --cizgi: #3f484b;
-
-    --hata: #ffb4ab;
+  :root:not([data-theme="light"]) {
+    --yuzey: var(--koyu-yuzey);
+    --yuzey-panel: var(--koyu-yuzey-panel);
+    --yuzey-yukseltilmis: var(--koyu-yuzey-yukseltilmis);
+    --murekkep: var(--koyu-murekkep);
+    --murekkep-sonuk: var(--koyu-murekkep-sonuk);
+    --murekkep-silik: var(--koyu-murekkep-silik);
+    --cizgi: var(--koyu-cizgi);
+    --hata: var(--koyu-hata);
+    color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --yuzey: var(--koyu-yuzey);
+  --yuzey-panel: var(--koyu-yuzey-panel);
+  --yuzey-yukseltilmis: var(--koyu-yuzey-yukseltilmis);
+  --murekkep: var(--koyu-murekkep);
+  --murekkep-sonuk: var(--koyu-murekkep-sonuk);
+  --murekkep-silik: var(--koyu-murekkep-silik);
+  --cizgi: var(--koyu-cizgi);
+  --hata: var(--koyu-hata);
+  color-scheme: dark;
 }
 
 @theme inline {

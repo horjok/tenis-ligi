@@ -1,3 +1,4 @@
+import { TemaSecici } from "@/app/tema-secici";
 import { eloGoster, ligBilgisi } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
@@ -127,6 +128,21 @@ export default async function Profil() {
           altındaki bağlantı da aynı işi yapar.
         </p>
         <TercihAnahtari acik={bildirimAcik} />
+      </section>
+
+      {/* ---------- Görünüm ---------- */}
+      {/* Temanın kalıcı yeri burası. Masaüstünde kenar çubuğunda da hızlı
+          erişim var; mobilde üst çubuk dört eylemle zaten doluydu. */}
+      <section className="flex flex-col gap-4">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Görünüm</h3>
+        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+          &quot;Oto&quot; seçiliyken telefonunun ya da bilgisayarının ayarını
+          takip eder. Seçimin bu tarayıcıda saklanır, diğer cihazlarına
+          taşınmaz.
+        </p>
+        <div className="max-w-xs">
+          <TemaSecici />
+        </div>
       </section>
     </div>
   );

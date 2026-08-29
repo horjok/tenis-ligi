@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cikisYap } from "@/app/actions/auth";
+import { TemaSecici } from "@/app/tema-secici";
 
 /* Satır içi ikonlar. Mockup'lar Material Symbols ikon fontu yüklüyordu;
    burada SVG kullanıyoruz — ağdan ekstra font inmiyor ve ikonlar yazı gibi
@@ -114,7 +115,10 @@ export function LigMenu({
     <>
       {/* ---------- Mobil üst çubuk ---------- */}
       <header className="fixed top-0 z-50 flex w-full items-center gap-3 border-b border-cizgi bg-yuzey-panel px-4 py-4 md:hidden">
-        <h1 className="flex-1 font-baslik text-[24px] tracking-wide">
+        {/* min-w-0 + truncate ŞART: bunlar olmadan başlık kendi içeriğinin
+            altına küçülemiyor ve sağdaki düğmeleri ekran dışına itiyor.
+            Dar telefonlarda çubuk yatay taşıyordu. */}
+        <h1 className="min-w-0 flex-1 truncate font-baslik text-[24px] tracking-wide">
           Tenis Ligi
         </h1>
         <Link
@@ -182,6 +186,8 @@ export function LigMenu({
           >
             Maç Ekle
           </Link>
+          <TemaSecici />
+
           <form action={cikisYap}>
             <button
               type="submit"

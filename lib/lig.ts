@@ -58,6 +58,22 @@ export function eloDegisimGoster(degisim: number | string | null): string {
   return n > 0 ? `+${n}` : String(n);
 }
 
+/**
+ * Saatsiz tarihleri ("2026-06-01") gösterir.
+ *
+ * Neden ayrı fonksiyon: `new Date("2026-06-01")` bu değeri UTC gece yarısı
+ * olarak okur. Negatif offsetli bir saat diliminde bu bir gün GERİYE kayar
+ * ve sezon 31 Mayıs'ta başlamış gibi görünür. Öğlen ekleyerek kesiyoruz —
+ * hiçbir saat dilimi öğleni başka bir güne taşıyamaz.
+ */
+export function gunGoster(tarih: string): string {
+  return new Date(`${tarih}T12:00:00`).toLocaleDateString("tr-TR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
 export function tarihGoster(isoTarih: string): string {
   return new Date(isoTarih).toLocaleDateString("tr-TR", {
     day: "2-digit",

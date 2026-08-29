@@ -1,10 +1,16 @@
 import { redirect } from "next/navigation";
 
 import { puanlariYenidenHesapla } from "@/app/actions/yonetim";
-import { ligBilgisi, tarihGoster } from "@/lib/lig";
+import { gunGoster, ligBilgisi, tarihGoster } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
-import { KodIptalButonu, KodUretFormu } from "./yonetim-formlari";
+import {
+  KodIptalButonu,
+  KodUretFormu,
+  SezonBitirFormu,
+  SezonOlusturFormu,
+  SezonSilButonu,
+} from "./yonetim-formlari";
 
 export default async function Yonetim() {
   const lig = await ligBilgisi();
@@ -18,7 +24,7 @@ export default async function Yonetim() {
 
   const supabase = await createClient();
 
-  const [{ data: kodlar }, { data: uyeler }] = await Promise.all([
+  const [{ data: kodlar }, { data: uyeler }, { data: sezonlar }] = await Promise.all([
     supabase
       .from("invite_codes")
       .select("id, code, max_uses, used_count, created_at")
@@ -29,6 +35,11 @@ export default async function Yonetim() {
       .select("user_id, display_name, username, role, status, joined_at")
       .eq("league_id", lig.ligId)
       .order("display_name"),
+    supabase
+      .from("seasons")
+      .select("id, name, starts_on, ends_on")
+      .eq("league_id", lig.ligId)
+      .order("starts_on", { ascending: false }),
   ]);
 
   return (
@@ -139,6 +150,61 @@ export default async function Yonetim() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ---------- Sezonlar ---------- */}
+      <section className="flex flex-col gap-4">
+        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Sezonlar</h3>
+        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+          Sezon yalnızca bir tarih aralığıdır. Maç kayıtlarına hiçbir şey
+          yazılmaz, Elo sıfırlanmaz. Sıralama o aralıkta{" "}
+          <strong>kazanılan puana</strong> göre hesaplanır — sezonun şampiyonu
+          en yüksek Elo&apos;lu oyuncu değil, en çok ilerleyendir.
+        </p>
+
+        <SezonOlusturFormu />
+
+        {sezonlar && sezonlar.length > 0 && (
+          <div className="mt-2 border border-cizgi bg-yuzey-panel">
+            <div className="grid grid-cols-12 gap-2 border-b border-cizgi bg-yuzey-yukseltilmis px-3 py-2.5 font-baslik text-[14px] uppercase tracking-wider text-murekkep-silik">
+              <div className="col-span-5">Sezon</div>
+              <div className="col-span-5">Aralık</div>
+              <div className="col-span-2" />
+            </div>
+
+            {sezonlar.map((sz, i) => (
+              <div
+                key={sz.id}
+                className={[
+                  "grid grid-cols-12 items-center gap-2 px-3 py-2.5",
+                  i === sezonlar.length - 1 ? "" : "border-b border-cizgi",
+                ].join(" ")}
+              >
+                <div className="col-span-5 truncate font-baslik text-[20px] uppercase">
+                  {sz.name}
+                </div>
+
+                <div className="col-span-5 font-veri text-[12px] text-murekkep-sonuk">
+                  {gunGoster(sz.starts_on)}
+                  {sz.ends_on ? (
+                    <> &mdash; {gunGoster(sz.ends_on)}</>
+                  ) : (
+                    <div className="mt-1.5 flex flex-wrap items-center gap-2">
+                      <span className="bg-kazanan px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-kort">
+                        Sürüyor
+                      </span>
+                      <SezonBitirFormu sezonId={sz.id} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="col-span-2 text-right">
+                  <SezonSilButonu sezonId={sz.id} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ---------- Yeniden hesaplama ---------- */}

@@ -4,7 +4,12 @@ import { gunGoster, ligBilgisi } from "@/lib/lig";
 import { ozetMetni, skorYaz, type OzetMaci } from "@/lib/ozet";
 import { createClient } from "@/lib/supabase/server";
 
-import { setleriOku, type MacSatiri } from "../mac-karti";
+import {
+  oyunculariOku,
+  setleriOku,
+  takimAdi,
+  type MacSatiri,
+} from "../mac-karti";
 import { PaylasimDugmeleri } from "./paylas";
 
 const HAFTA_GUN = 7;
@@ -53,37 +58,57 @@ export default async function HaftalikOzet() {
 
   const maclar = (haftaninMaclari ?? []) as MacSatiri[];
 
-  // Haftanın oyuncusu: mac_gecmisi zaten maç başına Elo değişimini taşıyor,
-  // o yüzden ayrı bir sorgu gerekmiyor — aynı satırları toplamak yeterli.
-  const kazanclar = new Map<string, { ad: string; kazanc: number; mac: number }>();
+  // Haftanın oyuncusu HAVUZ BAŞINA ayrı hesaplanıyor. mac_gecmisi zaten
+  // takım başına Elo değişimini taşıyor; takımdaki herkes aynı miktarı
+  // aldığı için o değeri her üyeye yazmak yeterli.
+  const kazanclar = new Map<
+    string,
+    { havuz: string; ad: string; kazanc: number; mac: number }
+  >();
+
   for (const m of maclar) {
-    const taraflar: [string | null, string | null, number | string | null][] = [
-      [m.oyuncu1_id, m.oyuncu1_ad, m.oyuncu1_elo_degisim],
-      [m.oyuncu2_id, m.oyuncu2_ad, m.oyuncu2_elo_degisim],
-    ];
-    for (const [id, ad, degisim] of taraflar) {
-      if (!id) continue;
-      const onceki = kazanclar.get(id) ?? { ad: ad ?? "—", kazanc: 0, mac: 0 };
-      kazanclar.set(id, {
-        ad: ad ?? onceki.ad,
-        kazanc: onceki.kazanc + Number(degisim ?? 0),
-        mac: onceki.mac + 1,
-      });
+    const taraflar: [ReturnType<typeof oyunculariOku>, number | string | null][] =
+      [
+        [oyunculariOku(m.takim1_oyuncular), m.takim1_elo_degisim],
+        [oyunculariOku(m.takim2_oyuncular), m.takim2_elo_degisim],
+      ];
+    for (const [oyuncular, degisim] of taraflar) {
+      for (const o of oyuncular) {
+        // Anahtar havuzu da içeriyor: aynı kişinin tekler ve çiftler
+        // kazancı asla tek sayıda toplanmasın.
+        const anahtar = `${m.match_type}:${o.id}`;
+        const onceki = kazanclar.get(anahtar) ?? {
+          havuz: m.match_type === "doubles" ? "Çiftler" : "Tekler",
+          ad: o.ad,
+          kazanc: 0,
+          mac: 0,
+        };
+        kazanclar.set(anahtar, {
+          ...onceki,
+          kazanc: onceki.kazanc + Number(degisim ?? 0),
+          mac: onceki.mac + 1,
+        });
+      }
     }
   }
 
-  const haftaninOyuncusu =
-    [...kazanclar.values()].sort((a, b) => b.kazanc - a.kazanc)[0] ?? null;
+  const haftaninOyunculari = ["Tekler", "Çiftler"]
+    .map(
+      (havuz) =>
+        [...kazanclar.values()]
+          .filter((k) => k.havuz === havuz)
+          .sort((a, b) => b.kazanc - a.kazanc)[0] ?? null,
+    )
+    // Kimse puan kazanmadıysa "haftanın oyuncusu" demek yanlış olur.
+    .filter((k): k is NonNullable<typeof k> => k !== null && k.kazanc > 0);
 
   const ozetMaclari: OzetMaci[] = maclar.map((m) => {
     const kazananTakim = m.winner_team;
-    const kazanan =
-      (kazananTakim === 2 ? m.oyuncu2_ad : m.oyuncu1_ad) ?? "—";
-    const kaybeden =
-      (kazananTakim === 2 ? m.oyuncu1_ad : m.oyuncu2_ad) ?? "—";
+    const t1 = takimAdi(oyunculariOku(m.takim1_oyuncular));
+    const t2 = takimAdi(oyunculariOku(m.takim2_oyuncular));
     return {
-      kazanan,
-      kaybeden,
+      kazanan: kazananTakim === 2 ? t2 : t1,
+      kaybeden: kazananTakim === 2 ? t1 : t2,
       skor: skorYaz(setleriOku(m.setler), kazananTakim),
     };
   });
@@ -92,9 +117,7 @@ export default async function HaftalikOzet() {
     baslangic: gunGoster(basiIso.slice(0, 10)),
     bitis: gunGoster(simdi.toISOString().slice(0, 10)),
     maclar: ozetMaclari,
-    // Kimse puan kazanmadıysa "haftanın oyuncusu" demek yanlış olur.
-    haftaninOyuncusu:
-      haftaninOyuncusu && haftaninOyuncusu.kazanc > 0 ? haftaninOyuncusu : null,
+    haftaninOyunculari,
     ilkUc: (siralama ?? []).map((s) => ({
       ad: s.display_name ?? "—",
       elo: Number(s.rating ?? 0),

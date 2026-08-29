@@ -4,7 +4,12 @@ import { eloDegisimGoster, eloGoster, gunGoster, ligBilgisi } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
 import { MacKarti, type MacSatiri } from "./mac-karti";
-import { SezonSecici, type SezonOzeti } from "./sezon-secici";
+import {
+  SezonSecici,
+  TurSecici,
+  type MacTuru,
+  type SezonOzeti,
+} from "./sezon-secici";
 
 /** Tabloda gösterilecek tek satır — hem tüm zamanlar hem sezon için aynı biçim. */
 type TabloSatiri = {
@@ -22,8 +27,14 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
   if (!lig) return null;
 
   const aramaParametreleri = await props.searchParams;
-  const ham = aramaParametreleri.sezon;
-  const istenenSezon = Array.isArray(ham) ? ham[0] : ham;
+  const tek = (ad: string) => {
+    const v = aramaParametreleri[ad];
+    return Array.isArray(v) ? v[0] : v;
+  };
+  const istenenSezon = tek("sezon");
+  // Bilinmeyen değer teklere düşüyor; adres çubuğundan gelen metne güven yok.
+  const tur: MacTuru = tek("tur") === "doubles" ? "doubles" : "singles";
+  const ciftler = tur === "doubles";
 
   const supabase = await createClient();
 
@@ -38,7 +49,9 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
         .from("puan_tablosu")
         .select("user_id, display_name, rating, matches_played, galibiyet, maglubiyet")
         .eq("league_id", lig.ligId)
-        .eq("match_type", "singles")
+        // Çiftler tablosunda yalnızca çiftler oynamış oyuncular çıkar:
+        // ratings satırı ancak ilk maçta açılıyor, ayrı bir süzgeç gerekmiyor.
+        .eq("match_type", tur)
         .order("rating", { ascending: false }),
       supabase
         .from("mac_gecmisi")
@@ -61,6 +74,10 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
         .from("sezon_puanlari")
         .select("user_id, display_name, kazanc, mac, galibiyet")
         .eq("season_id", seciliSezon.id)
+        // match_type ŞART: görünüm tekler ve çiftler için ayrı satır
+        // döndürüyor. Süzmezsek ikisini de oynayan oyuncu tabloda iki kez
+        // görünür.
+        .eq("match_type", tur)
         .order("kazanc", { ascending: false })
     : { data: null };
 
@@ -96,14 +113,18 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
         <header className="flex items-end justify-between border-b-4 border-kort pb-2">
           <h2 className="text-[32px] md:text-[44px]">Liderlik Tablosu</h2>
           <span className="mb-1.5 font-veri text-[12px] uppercase tracking-wider text-murekkep-silik">
-            Tekler
+            {ciftler ? "Çiftler" : "Tekler"}
           </span>
         </header>
 
-        <SezonSecici
-          sezonlar={sezonListesi}
-          seciliId={seciliSezon?.id ?? null}
-        />
+        <div className="flex flex-col gap-2">
+          <TurSecici tur={tur} sezonId={seciliSezon?.id ?? null} />
+          <SezonSecici
+            sezonlar={sezonListesi}
+            seciliId={seciliSezon?.id ?? null}
+            tur={tur}
+          />
+        </div>
 
         {seciliSezon && (
           <p className="text-xs leading-5 text-murekkep-silik">
@@ -118,8 +139,12 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
           <div className="border border-cizgi bg-yuzey-panel px-6 py-12 text-center">
             <p className="text-sm text-murekkep-sonuk">
               {seciliSezon
-                ? "Bu sezon aralığında oynanmış maç yok."
-                : "Henüz maç kaydedilmemiş. İlk maç girildiğinde tablo burada oluşur."}
+                ? ciftler
+                  ? "Bu sezon aralığında çiftler maçı oynanmamış."
+                  : "Bu sezon aralığında oynanmış maç yok."
+                : ciftler
+                  ? "Henüz çiftler maçı kaydedilmemiş. Maç ekle ekranından çiftler maçı girebilirsin."
+                  : "Henüz maç kaydedilmemiş. İlk maç girildiğinde tablo burada oluşur."}
             </p>
             {!seciliSezon && (
               <Link
@@ -220,7 +245,9 @@ export default async function Anasayfa(props: PageProps<"/lig">) {
         <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
           {seciliSezon
             ? "Elo sezon başında sıfırlanmaz, kesintisiz akar. Sezon yalnızca bir tarih aralığıdır."
-            : "Herkes 1000 puanla başlar. Güçlü rakibi yenmek çok, zayıf rakibi yenmek az kazandırır."}
+            : ciftler
+              ? "Çiftler puanı teklerden tamamen ayrı bir havuz. Takımın gücü iki oyuncunun ortalaması; kazanılan puan ikisine de aynı miktarda yazılır."
+              : "Herkes 1000 puanla başlar. Güçlü rakibi yenmek çok, zayıf rakibi yenmek az kazandırır."}
         </p>
       </section>
 

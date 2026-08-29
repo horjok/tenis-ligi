@@ -21,7 +21,19 @@ export type OzetGirdisi = {
   baslangic: string; // gösterilecek hâliyle, örn. "22 Ağustos 2026"
   bitis: string;
   maclar: OzetMaci[];
-  haftaninOyuncusu: { ad: string; kazanc: number; mac: number } | null;
+  /**
+   * Havuz başına bir kayıt. Tekler ve çiftler AYRI hesaplanıyor.
+   *
+   * İkisini toplasaydık, promptun açıkça yasakladığı "tekler ve çiftler
+   * puanlarının birleştirilmesi" arka kapıdan geri gelirdi — üstelik iki
+   * ayrı ölçekteki sayıyı toplamak zaten anlamsız.
+   */
+  haftaninOyunculari: {
+    havuz: string;
+    ad: string;
+    kazanc: number;
+    mac: number;
+  }[];
   ilkUc: { ad: string; elo: number }[];
   bekleyenOneri: number;
   siteAdresi: string;
@@ -62,12 +74,16 @@ export function ozetMetni(g: OzetGirdisi): string {
   }
   satirlar.push("");
 
-  if (g.haftaninOyuncusu) {
-    const h = g.haftaninOyuncusu;
+  if (g.haftaninOyunculari.length > 0) {
     satirlar.push("HAFTANIN OYUNCUSU");
-    satirlar.push(
-      `${duz(h.ad)} — ${imzali(h.kazanc)} puan, ${h.mac} maç`,
-    );
+    // Tek havuz varsa etiket gürültü olur; iki havuz varsa şart.
+    const etiketle = g.haftaninOyunculari.length > 1;
+    for (const h of g.haftaninOyunculari) {
+      const bas = etiketle ? `${h.havuz}: ` : "";
+      satirlar.push(
+        `${bas}${duz(h.ad)} — ${imzali(h.kazanc)} puan, ${h.mac} maç`,
+      );
+    }
     satirlar.push("");
   }
 

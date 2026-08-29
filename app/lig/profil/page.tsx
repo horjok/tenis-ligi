@@ -17,13 +17,18 @@ export default async function Profil() {
     // Bekleyen doğrulamayı da getirir ama TOKEN'ı getirmez — token'ı
     // görebilen kişi maildeki linke tıklamadan kendini doğrulayabilirdi.
     supabase.rpc("bildirim_durumum"),
+    // İki havuz ayrı satır olarak geliyor; match_type'a göre ayırıyoruz.
     supabase
       .from("puan_tablosu")
-      .select("rating, matches_played")
+      .select("match_type, rating, matches_played, galibiyet, maglubiyet")
       .eq("league_id", lig.ligId)
-      .eq("user_id", lig.kullaniciId)
-      .maybeSingle(),
+      .eq("user_id", lig.kullaniciId),
   ]);
+
+  const puan = (tur: string) =>
+    (oyuncu ?? []).find((s) => s.match_type === tur) ?? null;
+  const tekler = puan("singles");
+  const ciftler = puan("doubles");
 
   const durum = durumSatirlari?.[0] ?? null;
   const dogrulanmisAdres = durum?.email ?? null;
@@ -39,20 +44,40 @@ export default async function Profil() {
         <h2 className="mt-1 text-[32px] md:text-[44px]">{lig.gorunenAd}</h2>
       </header>
 
-      {/* ---------- Özet ---------- */}
-      <section className="grid grid-cols-2 gap-px border border-cizgi bg-cizgi sm:max-w-md">
-        <div className="bg-yuzey-panel px-4 py-3">
-          <p className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
-            Puan
-          </p>
-          <p className="veri mt-1 text-[28px]">{eloGoster(oyuncu?.rating ?? null)}</p>
+      {/* ---------- Puanlar ---------- */}
+      {/* Tekler ve çiftler ayrı havuz; tek bir "puanın" yok, ikisi var. */}
+      <section className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 gap-4 sm:max-w-lg sm:grid-cols-2">
+          {(
+            [
+              ["Tekler", tekler],
+              ["Çiftler", ciftler],
+            ] as const
+          ).map(([etiket, satir]) => (
+            <div key={etiket} className="border border-cizgi bg-yuzey-panel">
+              <div className="border-b border-cizgi bg-yuzey-yukseltilmis px-4 py-2 font-baslik text-[15px] uppercase tracking-wide text-murekkep-silik">
+                {etiket}
+              </div>
+              {satir ? (
+                <div className="flex items-end justify-between px-4 py-3">
+                  <p className="veri text-[32px]">{eloGoster(satir.rating)}</p>
+                  <p className="font-veri text-[12px] text-murekkep-silik">
+                    {satir.matches_played} maç · {satir.galibiyet}-
+                    {satir.maglubiyet}
+                  </p>
+                </div>
+              ) : (
+                <p className="px-4 py-4 text-sm text-murekkep-silik">
+                  Henüz {etiket.toLocaleLowerCase("tr")} maçı oynamadın.
+                </p>
+              )}
+            </div>
+          ))}
         </div>
-        <div className="bg-yuzey-panel px-4 py-3">
-          <p className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
-            Maç
-          </p>
-          <p className="veri mt-1 text-[28px]">{oyuncu?.matches_played ?? 0}</p>
-        </div>
+        <p className="max-w-xl text-xs leading-5 text-murekkep-silik">
+          İki puan birbirinden tamamen bağımsız. Çiftler maçı tekler puanını,
+          tekler maçı çiftler puanını etkilemez.
+        </p>
       </section>
 
       {/* ---------- E-posta ---------- */}

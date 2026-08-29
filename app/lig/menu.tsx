@@ -55,6 +55,13 @@ function Ikon({ ad }: { ad: string }) {
           <path d="M5 5c4 4 4 10 0 14M19 5c-4 4-4 10 0 14" />
         </svg>
       );
+    case "ozet":
+      return (
+        <svg {...ortak}>
+          <path d="M5 3h14v18H5z" />
+          <path d="M9 8h6M9 12h6M9 16h3" />
+        </svg>
+      );
     case "profil":
       return (
         <svg {...ortak}>
@@ -82,6 +89,7 @@ const BAGLANTILAR: Bag[] = [
   { yol: "/lig/onerilerim", etiket: "Öneriler", ikon: "oneri", mobil: true },
   { yol: "/lig/yaklasan", etiket: "Yaklaşan", ikon: "yaklasan", mobil: true },
   { yol: "/lig/maclar", etiket: "Maçlar", ikon: "maclar", mobil: true },
+  { yol: "/lig/ozet", etiket: "Haftalık Özet", ikon: "ozet", mobil: false },
   { yol: "/lig/profil", etiket: "Profil", ikon: "profil", mobil: false },
   { yol: "/lig/yonetim", etiket: "Yönetim", ikon: "yonetim", mobil: false },
 ];

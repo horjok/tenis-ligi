@@ -7,7 +7,9 @@ export type MacSatiri = {
   played_at: string;
   location: string | null;
   winner_team: number | null;
+  oyuncu1_id: string | null;
   oyuncu1_ad: string | null;
+  oyuncu2_id: string | null;
   oyuncu2_ad: string | null;
   oyuncu1_elo_degisim: number | string | null;
   oyuncu2_elo_degisim: number | string | null;

@@ -46,3 +46,11 @@ next-env.d.ts
 # ve kapatan bir ayar yok. Yerelde olusmalari sorun degil; depoya girmesinler.
 AGENTS.md
 CLAUDE.md
+
+# Obsidian notlari
+# Bu klasore vault notlari dusuyor (proje plani, faz promptlari). Depo
+# herkese acik; planlama notlarinin orada isi yok. README disindaki tum
+# kok .md dosyalari yok sayiliyor -- isimle eslestirmek yerine boyle
+# yapiliyor ki ileride gelen baska bir not da kendiliginden disarida kalsin.
+/*.md
+!/README.md

@@ -1,4 +1,5 @@
 import { TemaSecici } from "@/app/tema-secici";
+import { BILDIRIM_ACIK } from "@/lib/ozellikler";
 import { eloGoster, ligBilgisi } from "@/lib/lig";
 import { createClient } from "@/lib/supabase/server";
 
@@ -88,53 +89,80 @@ export default async function Profil() {
         </p>
       </section>
 
-      {/* ---------- E-posta ---------- */}
-      <section className="flex flex-col gap-4">
-        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">E-posta</h3>
-        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
-          Zorunlu değil. Eklersen, cevabını bekleyen önerilerin varken günde{" "}
-          <strong>bir kez</strong> hatırlatma maili alırsın — öneri başına
-          ayrı mail gitmez. Adresin ligdeki kimseye görünmez.
-        </p>
+      {/* ---------- E-posta bildirimleri ---------- */}
+      {/* Bayrak kapalıyken form GÖSTERİLMİYOR. Sebebi dürüstlük: adres
+          yazılsa "doğrulama bağlantısı gönderildi" derdik ve hiçbir şey
+          gitmezdi. Altyapı hazır, eksik olan mail servisi. */}
+      {BILDIRIM_ACIK ? (
+        <>
+          <section className="flex flex-col gap-4">
+            <h3 className="border-b border-cizgi pb-1.5 text-[22px]">E-posta</h3>
+            <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+              Zorunlu değil. Eklersen, cevabını bekleyen önerilerin varken
+              günde <strong>bir kez</strong> hatırlatma maili alırsın — öneri
+              başına ayrı mail gitmez. Adresin ligdeki kimseye görünmez.
+            </p>
 
-        {dogrulanmisAdres ? (
-          <div className="flex flex-wrap items-center justify-between gap-3 border border-cizgi bg-yuzey-panel px-4 py-3">
-            <div className="min-w-0">
-              <p className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
-                Doğrulanmış adres
+            {dogrulanmisAdres ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 border border-cizgi bg-yuzey-panel px-4 py-3">
+                <div className="min-w-0">
+                  <p className="font-veri text-[11px] uppercase tracking-wide text-murekkep-silik">
+                    Doğrulanmış adres
+                  </p>
+                  <p className="mt-0.5 truncate font-veri text-[15px]">
+                    {dogrulanmisAdres}
+                  </p>
+                </div>
+                <EpostaSilButonu />
+              </div>
+            ) : (
+              <p className="border border-dashed border-cizgi px-4 py-3 text-sm text-murekkep-silik">
+                Kayıtlı adresin yok, sana mail gitmiyor.
               </p>
-              <p className="mt-0.5 truncate font-veri text-[15px]">
-                {dogrulanmisAdres}
+            )}
+
+            {bekleyenAdres && (
+              <p className="border-l-4 border-kazanan bg-yuzey-yukseltilmis px-3 py-2.5 text-sm leading-6">
+                <strong className="font-veri">{bekleyenAdres}</strong> adresine
+                bir doğrulama bağlantısı gönderdik. Tıklayana kadar bu adrese
+                mail gitmez. Bağlantı 24 saat geçerli.
               </p>
-            </div>
-            <EpostaSilButonu />
+            )}
+
+            <EpostaFormu mevcutAdres={dogrulanmisAdres} />
+          </section>
+
+          <section className="flex flex-col gap-4">
+            <h3 className="border-b border-cizgi pb-1.5 text-[22px]">
+              Bildirimler
+            </h3>
+            <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+              Kapatırsan adresin kayıtlı kalır ama mail gönderilmez. Maillerin
+              altındaki bağlantı da aynı işi yapar.
+            </p>
+            <TercihAnahtari acik={bildirimAcik} />
+          </section>
+        </>
+      ) : (
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3 border-b border-cizgi pb-1.5">
+            <h3 className="text-[22px]">E-posta bildirimleri</h3>
+            <span className="bg-yuzey-yukseltilmis px-2 py-1 font-veri text-[10px] uppercase tracking-wide text-murekkep-silik">
+              Hazırlanıyor
+            </span>
           </div>
-        ) : (
-          <p className="border border-dashed border-cizgi px-4 py-3 text-sm text-murekkep-silik">
-            Kayıtlı adresin yok, sana mail gitmiyor.
+          <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
+            Henüz açık değil. Açıldığında, cevabını bekleyen önerilerin varken
+            günde bir kez hatırlatma maili alacaksın — öneri başına ayrı mail
+            gitmeyecek. İstemezsen kapatabileceksin.
           </p>
-        )}
-
-        {bekleyenAdres && (
-          <p className="border-l-4 border-kazanan bg-yuzey-yukseltilmis px-3 py-2.5 text-sm leading-6">
-            <strong className="font-veri">{bekleyenAdres}</strong> adresine bir
-            doğrulama bağlantısı gönderdik. Tıklayana kadar bu adrese mail
-            gitmez. Bağlantı 24 saat geçerli.
+          <p className="max-w-xl text-sm leading-6 text-murekkep-silik">
+            O zamana kadar önerilerini{" "}
+            <strong className="text-murekkep-sonuk">Öneriler</strong>{" "}
+            sayfasından takip edebilirsin.
           </p>
-        )}
-
-        <EpostaFormu mevcutAdres={dogrulanmisAdres} />
-      </section>
-
-      {/* ---------- Bildirim tercihi ---------- */}
-      <section className="flex flex-col gap-4">
-        <h3 className="border-b border-cizgi pb-1.5 text-[22px]">Bildirimler</h3>
-        <p className="max-w-xl text-sm leading-6 text-murekkep-sonuk">
-          Kapatırsan adresin kayıtlı kalır ama mail gönderilmez. Maillerin
-          altındaki bağlantı da aynı işi yapar.
-        </p>
-        <TercihAnahtari acik={bildirimAcik} />
-      </section>
+        </section>
+      )}
 
       {/* ---------- Hesap ---------- */}
       <section className="flex flex-col gap-6">
